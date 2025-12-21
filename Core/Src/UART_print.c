@@ -62,12 +62,12 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 	__disable_irq();
 
 	if (pending_size == 0) {
-		__enable_irq();
 		tx_busy = 0;
+		__enable_irq();
 		return;
 	}
 
-	volatile uint8_t *tmp = active;
+	uint8_t *tmp = active;
 	active = pending;
 	pending = tmp;
 
@@ -76,5 +76,7 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 
 	__enable_irq();
 
-	HAL_UART_Transmit_DMA(&huart2, (uint8_t*)active, len);
+	if (HAL_UART_GetState(huart) == HAL_UART_STATE_READY) {
+		HAL_UART_Transmit_DMA(&huart2, (uint8_t*)active, len);
+	}
 }
