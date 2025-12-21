@@ -45,10 +45,12 @@ void buttons_update(void){
 	for (uint8_t i = 0; i < num_buttons; i++) {
 		if (!pending[i]) continue;
 
-		if (now - pending_time[i] > debounce) {
-			int state = HAL_GPIO_ReadPin(GPIOB, pins[i]);
-			buttons[i] = (state == 0) ? 1 : 0;
-		}
+		if ((now - pending_time[i]) < debounce) continue;
+
+		int state = HAL_GPIO_ReadPin(GPIOB, pins[i]);
+		buttons[i] = (state == 0) ? 1 : 0;
+
+		pending[i] = 0;
 	}
 }
 
