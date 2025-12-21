@@ -11,9 +11,7 @@
 #include "stm32f4xx_hal.h"
 
 //ABXY+-
-uint32_t buttons [] = {0, 0, 0, 0, 0, 0};
-uint32_t debounce_time [] = {0, 0, 0, 0, 0, 0};
-
+#define num_buttons 6
 #define debounce 10
 
 #define A GPIO_PIN_3
@@ -23,39 +21,48 @@ uint32_t debounce_time [] = {0, 0, 0, 0, 0, 0};
 #define plus GPIO_PIN_8
 #define minus GPIO_PIN_9
 
-int state = 0;
-void InterruptHelper(uint16_t GPIO_PIN, uint8_t index){
+uint32_t pins[num_buttons] = {A, B, X, Y, plus, minus};
+int buttons [num_buttons] = {0};
+
+uint32_t pending_time [num_buttons] = {0};
+uint32_t pending[num_buttons] = {0};
+
+//int state = 0;
+//void InterruptHelper(uint16_t GPIO_PIN, uint8_t index){
+//	uint32_t now = HAL_GetTick();
+//
+//	if (now - debounce_time[index] > debounce){
+//		uint8_t level = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN);
+//		buttons[index] = (level == 0) ? 1 : 0;
+//
+//		debounce_time[index] = now;
+//	}
+//}
+
+void buttons_update(void){
 	uint32_t now = HAL_GetTick();
 
-	if (now - debounce_time[index] > debounce){
-		uint8_t level = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN);
-		buttons[index] = (level == 0) ? 1 : 0;
+	for (uint8_t i = 0; i < num_buttons; i++) {
+		if (!pending[i]) continue;
 
-		debounce_time[index] = now;
+		if (now - pending_time[i] > debounce) {
+			int state = HAL_GPIO_ReadPin(GPIOB, pins[i]);
+			buttons[i] = (state == 0) ? 1 : 0;
+		}
 	}
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+	uint32_t now = HAL_GetTick();
 
-	if(GPIO_Pin == A) {
-		InterruptHelper(A, 0);
+	for (int i = 0; i < num_buttons; i++) {
+		if (GPIO_Pin == pins[i]){
+			pending[i] = 1;
+			pending_time[i] = now;
+			break;
+		}
 	}
 
-	if(GPIO_Pin == B) {
-		InterruptHelper(B, 1);
-	}
-	if(GPIO_Pin == X) {
-		InterruptHelper(X, 2);
-	}
-	if(GPIO_Pin == Y) {
-		InterruptHelper(Y, 3);
-	}
-	if(GPIO_Pin == plus) {
-		InterruptHelper(plus, 4);
-	}
-	if(GPIO_Pin == minus) {
-		InterruptHelper(minus, 5);
-	}
 }
 
 void read_button(void){

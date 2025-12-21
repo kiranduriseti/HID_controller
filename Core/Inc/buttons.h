@@ -8,6 +8,6 @@
 #ifndef INC_BUTTONS_H_
 #define INC_BUTTONS_H_
 
-
+void buttons_update(void);
 
 #endif /* INC_BUTTONS_H_ */

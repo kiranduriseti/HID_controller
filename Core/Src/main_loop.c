@@ -10,6 +10,8 @@
 #include "gpio.h"
 #include "stm32f4xx_hal.h"
 
+#include "buttons.h"
+#include "joystick.h"
 
 void main_loop(void){
 	//UART_print_blocking ("Test\r\n");
@@ -19,5 +21,7 @@ void main_loop(void){
 
 	UART_print("Testing Buffer\r\n");
 	HAL_Delay(1000);
+
+	buttons_update();
 }
 
