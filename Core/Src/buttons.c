@@ -7,6 +7,9 @@
 
 #include "UART_print.h"
 #include <string.h>
+#include <stdio.h>
+#include "stm32f4xx_hal.h"
+
 //ABXY+-
 uint32_t buttons [] = {0, 0, 0, 0, 0, 0};
 uint32_t debounce_time [] = {0, 0, 0, 0, 0, 0};
@@ -26,14 +29,7 @@ void InterruptHelper(uint16_t GPIO_PIN, uint8_t index){
 
 	if (now - debounce_time[index] > debounce){
 		uint8_t level = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN);
-		state = (level == 0) ? 1 : 0;
-
-		if (state) {
-			buttons[index] = 1;
-		}
-		else {
-			buttons[index] = 0;
-		}
+		buttons[index] = (level == 0) ? 1 : 0;
 
 		debounce_time[index] = now;
 	}
@@ -63,6 +59,10 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 }
 
 void read_button(void){
-	char msg [] = buttons;
+	char msg[64];
+	snprintf(msg, sizeof(msg),
+			 "A:%d B:%d X:%d Y:%d +:%d -:%d\r\n",
+			 buttons[0], buttons[1], buttons[2],
+			 buttons[3], buttons[4], buttons[5]);
 	UART_print(msg);
 }
