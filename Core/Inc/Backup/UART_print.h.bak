@@ -10,5 +10,6 @@
 
 
 void UART_print(char *msg);
+void UART_print_blocking(char *msg);
 
 #endif /* INC_UART_PRINT_H_ */

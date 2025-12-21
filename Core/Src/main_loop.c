@@ -12,13 +12,12 @@
 
 
 void main_loop(void){
-	UART_print_blocking ("Test\r\n");
+	//UART_print_blocking ("Test\r\n");
 	char msg[] = "Hello World\r\n";
 	UART_print(msg);
 	HAL_Delay(1000);
 
-	char msg2[] = "Testing Buffer\r\n";
-	UART_print(msg);
+	UART_print("Testing Buffer\r\n");
 	HAL_Delay(1000);
 }
 
