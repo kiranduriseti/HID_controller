@@ -20,7 +20,7 @@ static volatile uint8_t tx_buffer2[IO_SIZE];
 
 static volatile uint8_t *active = tx_buffer1;
 static volatile uint8_t *pending = tx_buffer2;
-static volatile uint8_t pending_size = 0;
+static volatile uint32_t pending_size = 0;
 
 static volatile uint8_t tx_busy = 0;
 
@@ -30,7 +30,7 @@ void UART_print_blocking(char* msg){
 }
 
 void UART_print(char *msg){
-	if (msg = NULL) return;
+	if (msg == NULL) return;
 
 	__disable_irq();
 
@@ -41,7 +41,11 @@ void UART_print(char *msg){
 
 		__enable_irq();
 
-		HAL_UART_Transmit_DMA(&huart2, (uint8_t*)msg, strlen(msg));
+		HAL_UART_Transmit_DMA(&huart2, (uint8_t*)active, strlen(active));
+
+//		if (HAL_UART_Transmit_DMA(&huart2, (uint8_t*)active, strlen(active)) != HAL_OK){
+//			tx_busy = 0;
+//		}
 	}
 	else {
 		sprintf((char*)pending, "%s", msg);
@@ -58,8 +62,9 @@ void HAL_UART_TxCpltCallback(UART_HandleTypeDef *huart){
 	__disable_irq();
 
 	if (pending_size == 0) {
-		return;
 		__enable_irq();
+		tx_busy = 0;
+		return;
 	}
 
 	volatile uint8_t *tmp = active;
