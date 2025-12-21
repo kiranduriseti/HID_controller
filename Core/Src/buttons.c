@@ -8,8 +8,8 @@
 #include "UART_print.h"
 #include <string.h>
 //ABXY+-
-int buttons [] = {0, 0, 0, 0, 0, 0};
-int debounce_time = {0, 0, 0, 0, 0, 0};
+uint32_t buttons [] = {0, 0, 0, 0, 0, 0};
+uint32_t debounce_time [] = {0, 0, 0, 0, 0, 0};
 
 #define debounce 10
 
