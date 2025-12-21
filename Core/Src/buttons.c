@@ -20,44 +20,45 @@ int debounce_time = {0, 0, 0, 0, 0, 0};
 #define plus GPIO_PIN_8
 #define minus GPIO_PIN_9
 
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+int state = 0;
+void InterruptHelper(uint16_t GPIO_PIN, uint8_t index){
 	uint32_t now = HAL_GetTick();
 
-	if(GPIO_Pin == A) {
-		if (now - debounce_time[0] > debounce){
-			debounce_time[0] = now;
-			buttons[0] ^= 1;
+	if (now - debounce_time[index] > debounce){
+		uint8_t level = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN);
+		state = (level == 0) ? 1 : 0;
+
+		if (state) {
+			buttons[index] = 1;
 		}
+		else {
+			buttons[index] = 0;
+		}
+
+		debounce_time[index] = now;
 	}
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
+
+	if(GPIO_Pin == A) {
+		InterruptHelper(A, 0);
+	}
+
 	if(GPIO_Pin == B) {
-		if (now - debounce_time[1] > debounce){
-			debounce_time[1] = now;
-			buttons[1] ^= 1;
-		}
+		InterruptHelper(B, 1);
 	}
 	if(GPIO_Pin == X) {
-		if (now - debounce_time[2] > debounce){
-			debounce_time[2] = now;
-			buttons[2] ^= 1;
-		}
+		InterruptHelper(X, 2);
 	}
 	if(GPIO_Pin == Y) {
-		if (now - debounce_time[3] > debounce){
-			debounce_time[3] = now;
-			buttons[3] ^= 1;
-		}
+		InterruptHelper(Y, 3);
 	}
 	if(GPIO_Pin == plus) {
-		if (now - debounce_time[3] > debounce){
-			debounce_time[3] = now;
-			buttons[3] ^= 1;
-		}
+		InterruptHelper(plus, 4);
 	}
 	if(GPIO_Pin == minus) {
-		if (now - debounce_time[3] > debounce){
-			debounce_time[3] = now;
-			buttons[3] ^= 1;
-		}
+		InterruptHelper(minus, 5);
 	}
 }
 

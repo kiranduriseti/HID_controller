@@ -47,7 +47,7 @@ void MX_GPIO_Init(void)
                            plus_Pin minus_Pin */
   GPIO_InitStruct.Pin = A_Pin|B_Pin|X_Pin|Y_Pin
                           |plus_Pin|minus_Pin;
-  GPIO_InitStruct.Mode = GPIO_MODE_IT_FALLING;
+  GPIO_InitStruct.Mode = GPIO_MODE_IT_RISING_FALLING;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
