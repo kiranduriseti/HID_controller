@@ -16,6 +16,7 @@
   ******************************************************************************
   */
 #include "main_loop.h"
+#include "joystick.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -102,6 +103,7 @@ int main(void)
   while (1)
   {
 	main_loop();
+	joystick_start_scan();
     /* USER CODE END WHILE */
 
     /* USER CODE BEGIN 3 */

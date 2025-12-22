@@ -13,6 +13,19 @@
 #include "buttons.h"
 #include "joystick.h"
 
+int16_t lx, ly, rx, ry;
+
+void read_joystick(void) {
+	lx = joy_signed(0);
+	ly = joy_signed(0);
+	rx = joy_signed(0);
+	ly = joy_signed(0);
+
+	if (fresh_data) {
+		fresh_data = 0;
+	}
+}
+
 void main_loop(void){
 	//UART_print_blocking ("Test\r\n");
 	char msg[] = "Hello World\r\n";
@@ -23,5 +36,7 @@ void main_loop(void){
 	HAL_Delay(1000);
 
 	buttons_update();
+
+	read_joystick();
 }
 

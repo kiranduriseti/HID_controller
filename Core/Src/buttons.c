@@ -27,18 +27,6 @@ int buttons [num_buttons] = {0};
 uint32_t pending_time [num_buttons] = {0};
 uint32_t pending[num_buttons] = {0};
 
-//int state = 0;
-//void InterruptHelper(uint16_t GPIO_PIN, uint8_t index){
-//	uint32_t now = HAL_GetTick();
-//
-//	if (now - debounce_time[index] > debounce){
-//		uint8_t level = HAL_GPIO_ReadPin(GPIOB, GPIO_PIN);
-//		buttons[index] = (level == 0) ? 1 : 0;
-//
-//		debounce_time[index] = now;
-//	}
-//}
-
 void buttons_update(void){
 	uint32_t now = HAL_GetTick();
 
