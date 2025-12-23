@@ -9,7 +9,7 @@
 #include <string.h>
 #include <stdio.h>
 #include "stm32f4xx_hal.h"
-
+#include "joystick.h"
 //ABXY+-
 #define num_buttons 6
 #define debounce 10
@@ -27,7 +27,6 @@ int buttons [num_buttons] = {0};
 uint32_t pending_time [num_buttons] = {0};
 uint32_t pending[num_buttons] = {0};
 
-volatile int fresh_button = 0;
 void buttons_update(void){
 	uint32_t now = HAL_GetTick();
 
@@ -40,7 +39,7 @@ void buttons_update(void){
 		buttons[i] = (state == 0) ? 1 : 0;
 
 		pending[i] = 0;
-		fresh_button = 1;
+		fresh_data = 1;
 	}
 }
 
@@ -58,7 +57,7 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 }
 
 void read_button(void){
-	fresh_button = 0;
+	fresh_data = 0;
 	char msg[64];
 	snprintf(msg, sizeof(msg),
 			 "A:%d B:%d X:%d Y:%d +:%d -:%d\r\n",

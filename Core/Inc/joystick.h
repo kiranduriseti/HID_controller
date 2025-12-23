@@ -12,6 +12,8 @@
 extern volatile uint8_t fresh_data;
 
 void joystick_start_scan(void);
+void joystick_update(void);
+void joystick_print(void);
 int16_t joy_signed(uint8_t ch);
 uint16_t joy_raw(uint8_t ch);
 

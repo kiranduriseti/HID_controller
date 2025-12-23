@@ -26,6 +26,7 @@
 volatile uint8_t fresh_data;
 
 uint16_t joystick_adc[channels] = {0};
+int16_t lx, ly, rx, ry;
 
 int16_t deadzone_scale(int32_t x){
 	//ignore deadzone
@@ -66,5 +67,28 @@ int16_t joy_signed(uint8_t ch) {
 	return centered;
 }
 
+
+void joystick_print(void) {
+	char msg[64];
+	snprintf(msg, sizeof(msg), "lx: %d, ly: %d, rx: %d, ry: %d\n", lx, ly, rx, ry);
+	UART_print(msg);
+
+}
+
+void joystick_update(void) {
+	lx = joy_signed(0);
+	ly = joy_signed(1);
+	rx = joy_signed(2);
+	ry = joy_signed(3);
+
+	if (fresh_data) {
+		fresh_data = 0;
+		if (fresh_data) {
+		    fresh_data = 0;  // Reset the flag
+		    joystick_print();
+		}
+
+	}
+}
 
 
