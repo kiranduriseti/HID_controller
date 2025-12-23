@@ -15,28 +15,37 @@
 
 int16_t lx, ly, rx, ry;
 
-void read_joystick(void) {
+void joystick_loop(void) {
 	lx = joy_signed(0);
-	ly = joy_signed(0);
-	rx = joy_signed(0);
-	ly = joy_signed(0);
+	ly = joy_signed(1);
+	rx = joy_signed(2);
+	ry = joy_signed(3);
 
 	if (fresh_data) {
 		fresh_data = 0;
+		if (fresh_data) {
+		    fresh_data = 0;  // Reset the flag
+		    printf("lx: %d, ly: %d, rx: %d, ry: %d\n", lx, ly, rx, ry);
+		}
+
 	}
 }
 
-void main_loop(void){
-	//UART_print_blocking ("Test\r\n");
-	char msg[] = "Hello World\r\n";
-	UART_print(msg);
-	HAL_Delay(1000);
-
-	UART_print("Testing Buffer\r\n");
-	HAL_Delay(1000);
-
+void button_loop(void) {
 	buttons_update();
 
-	read_joystick();
+	if (fresh_button) {
+		read_button();
+	}
+}
+
+
+void main_loop(void){
+
+	UART_print("Hello World\r\n");
+	UART_print("Testing Buffer\r\n");
+
+	button_loop();
+	joystick_loop();
 }
 
