@@ -65,3 +65,15 @@ void buttons_print(void){
 			 buttons[3], buttons[4], buttons[5]);
 	UART_print(msg);
 }
+
+uint8_t get_report_buttons(void) {
+	uint8_t send = (uint8_t) ((buttons[0] << 6) |
+						 (buttons[1] << 5) |
+						 (buttons[2] << 4) |
+						 (buttons[3] << 3) |
+						 (buttons[4] << 2) |
+						 (buttons[5] << 1)
+	);
+
+	return send;
+}
