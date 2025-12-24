@@ -9,5 +9,5 @@
 #define INC_BUTTONS_H_
 
 void buttons_update(void);
-void read_button(void);
+void buttons_print(void);
 #endif /* INC_BUTTONS_H_ */

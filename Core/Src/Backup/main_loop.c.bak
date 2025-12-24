@@ -13,15 +13,24 @@
 #include "buttons.h"
 #include "joystick.h"
 
+void print_loop () {
+	//if (fresh_data) {
+//	read_button();
+//	joystick_print();
+	//}
+}
+
 void main_loop(void){
-	//UART_print_blocking ("Test\r\n");
-	char msg[] = "Hello World\r\n";
-	UART_print(msg);
-	HAL_Delay(1000);
 
-	UART_print("Testing Buffer\r\n");
-	HAL_Delay(1000);
+	//UART_print("Hello World\r\n");
+	//UART_print("Testing Buffer\r\n");
 
-	buttons_update();
+//	buttons_update();
+//	joystick_update();
+//
+//	read_button();
+//	HAL_Delay(10);
+//	joystick_print();
+//	HAL_Delay(4000);
 }
 

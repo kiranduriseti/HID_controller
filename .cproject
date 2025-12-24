@@ -23,8 +23,8 @@
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.55462752" name="Floating-point unit" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.value.fpv4-sp-d16" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.62566630" name="Floating-point ABI" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.value.hard" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.1510949801" name="Board" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board" value="genericBoard" valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1012109251" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.6 || Debug || true || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32F446RETx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../Core/Inc | ../Drivers/STM32F4xx_HAL_Driver/Inc | ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy | ../Drivers/CMSIS/Device/ST/STM32F4xx/Include | ../Drivers/CMSIS/Include ||  ||  || USE_HAL_DRIVER | STM32F446xx ||  || Drivers | Core/Startup | Core ||  ||  || ${workspace_loc:/${ProjName}/STM32F446RETX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || None ||  ||  || " valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.debug.option.cpuclock.1260569841" superClass="com.st.stm32cube.ide.mcu.debug.option.cpuclock" value="16" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.1012109251" name="Defaults" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.6 || Debug || true || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32F446RETx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../Core/Inc | ../Drivers/STM32F4xx_HAL_Driver/Inc | ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy | ../Drivers/CMSIS/Device/ST/STM32F4xx/Include | ../Drivers/CMSIS/Include | ../USB_DEVICE/App | ../USB_DEVICE/Target | ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc | ../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc ||  ||  || USE_HAL_DRIVER | STM32F446xx ||  || Drivers | Core/Startup | Middlewares | Core | USB_DEVICE ||  ||  || ${workspace_loc:/${ProjName}/STM32F446RETX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || None ||  ||  || " valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.debug.option.cpuclock.1260569841" superClass="com.st.stm32cube.ide.mcu.debug.option.cpuclock" value="26" valueType="string"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform.115808730" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
 							<builder buildPath="${workspace_loc:/HID_controller}/Debug" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder.492459188" keepEnvironmentInBuildfile="false" managedBuildOn="true" name="Gnu Make Builder" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder"/>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.1073007827" name="MCU/MPU GCC Assembler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler">
@@ -48,6 +48,10 @@
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="../USB_DEVICE/App"/>
+									<listOptionValue builtIn="false" value="../USB_DEVICE/Target"/>
+									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_USB_Device_Library/Core/Inc"/>
+									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.1427227278" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -75,7 +79,9 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>
@@ -103,8 +109,8 @@
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.1800220375" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.fpu.value.fpv4-sp-d16" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.2014651337" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi" value="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.floatabi.value.hard" valueType="enumerated"/>
 							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board.604119610" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.target_board" value="genericBoard" valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.354297127" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.6 || Release || false || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32F446RETx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../Core/Inc | ../Drivers/STM32F4xx_HAL_Driver/Inc | ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy | ../Drivers/CMSIS/Device/ST/STM32F4xx/Include | ../Drivers/CMSIS/Include ||  ||  || USE_HAL_DRIVER | STM32F446xx ||  || Drivers | Core/Startup | Core ||  ||  || ${workspace_loc:/${ProjName}/STM32F446RETX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || None ||  ||  || " valueType="string"/>
-							<option id="com.st.stm32cube.ide.mcu.debug.option.cpuclock.1931856613" superClass="com.st.stm32cube.ide.mcu.debug.option.cpuclock" value="16" valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults.354297127" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.option.defaults" value="com.st.stm32cube.ide.common.services.build.inputs.revA.1.0.6 || Release || false || Executable || com.st.stm32cube.ide.mcu.gnu.managedbuild.option.toolchain.value.workspace || STM32F446RETx || 0 || 0 || arm-none-eabi- || ${gnu_tools_for_stm32_compiler_path} || ../Core/Inc | ../Drivers/STM32F4xx_HAL_Driver/Inc | ../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy | ../Drivers/CMSIS/Device/ST/STM32F4xx/Include | ../Drivers/CMSIS/Include | ../USB_DEVICE/App | ../USB_DEVICE/Target | ../Middlewares/ST/STM32_USB_Device_Library/Core/Inc | ../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc ||  ||  || USE_HAL_DRIVER | STM32F446xx ||  || Drivers | Core/Startup | Middlewares | Core | USB_DEVICE ||  ||  || ${workspace_loc:/${ProjName}/STM32F446RETX_FLASH.ld} || true || NonSecure ||  || secure_nsclib.o ||  || None ||  ||  || " valueType="string"/>
+							<option id="com.st.stm32cube.ide.mcu.debug.option.cpuclock.1931856613" superClass="com.st.stm32cube.ide.mcu.debug.option.cpuclock" value="26" valueType="string"/>
 							<targetPlatform archList="all" binaryParser="org.eclipse.cdt.core.ELF" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform.327483303" isAbstract="false" osList="all" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.targetplatform"/>
 							<builder buildPath="${workspace_loc:/HID_controller}/Release" id="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder.2003130619" managedBuildOn="true" name="Gnu Make Builder.Release" parallelBuildOn="true" parallelizationNumber="optimal" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.builder"/>
 							<tool id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler.2000763734" name="MCU/MPU GCC Assembler" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.assembler">
@@ -124,6 +130,10 @@
 									<listOptionValue builtIn="false" value="../Drivers/STM32F4xx_HAL_Driver/Inc/Legacy"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Device/ST/STM32F4xx/Include"/>
 									<listOptionValue builtIn="false" value="../Drivers/CMSIS/Include"/>
+									<listOptionValue builtIn="false" value="../USB_DEVICE/App"/>
+									<listOptionValue builtIn="false" value="../USB_DEVICE/Target"/>
+									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_USB_Device_Library/Core/Inc"/>
+									<listOptionValue builtIn="false" value="../Middlewares/ST/STM32_USB_Device_Library/Class/CustomHID/Inc"/>
 								</option>
 								<inputType id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c.822424051" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.input.c"/>
 							</tool>
@@ -151,7 +161,9 @@
 					</folderInfo>
 					<sourceEntries>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Core"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Middlewares"/>
 						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="Drivers"/>
+						<entry flags="VALUE_WORKSPACE_PATH|RESOLVED" kind="sourcePath" name="USB_DEVICE"/>
 					</sourceEntries>
 				</configuration>
 			</storageModule>

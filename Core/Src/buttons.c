@@ -39,7 +39,7 @@ void buttons_update(void){
 		buttons[i] = (state == 0) ? 1 : 0;
 
 		pending[i] = 0;
-		fresh_data = 1;
+		//fresh_data = 1;
 	}
 }
 
@@ -56,8 +56,8 @@ void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
 
 }
 
-void read_button(void){
-	fresh_data = 0;
+void buttons_print(void){
+	//fresh_data = 0;
 	char msg[64];
 	snprintf(msg, sizeof(msg),
 			 "A:%d B:%d X:%d Y:%d +:%d -:%d\r\n",

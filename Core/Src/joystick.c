@@ -6,6 +6,7 @@
  */
 
 #include <stdint.h>
+#include "tim.h"
 #include "UART_print.h"
 #include <stdio.h>
 #include "adc.h"
@@ -23,7 +24,7 @@
 #define deadzone (.015*ADC_max)
 #define clamp 32767
 
-volatile uint8_t fresh_data;
+//volatile uint8_t fresh_data;
 
 uint16_t joystick_adc[channels] = {0};
 int16_t lx, ly, rx, ry;
@@ -45,14 +46,21 @@ int16_t deadzone_scale(int32_t x){
 }
 
 void joystick_start_scan(void) {
-	fresh_data = 0;
+	//fresh_data = 0;
+	//HAL_ADCEx_Calibration_Start(&hadc1, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED);
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)joystick_adc, channels);
+	HAL_TIM_Base_Start(&htim3);
 }
 
 //whenever circular buffer completes cycle
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
 	if (hadc->Instance == ADC1) {
-		fresh_data = 1;
+//		fresh_data = 1;
+		joystick_update();
+		joystick_print();
+
+		buttons_update();
+		buttons_print();
 	}
 }
 
@@ -76,19 +84,14 @@ void joystick_print(void) {
 }
 
 void joystick_update(void) {
-	lx = joy_signed(0);
-	ly = joy_signed(1);
-	rx = joy_signed(2);
-	ry = joy_signed(3);
+//	if (!fresh_data) return;
+//	fresh_data = 0;
 
-	if (fresh_data) {
-		fresh_data = 0;
-		if (fresh_data) {
-		    fresh_data = 0;  // Reset the flag
-		    joystick_print();
-		}
+	lx = deadzone_scale(joy_signed(0));
+	ly = deadzone_scale(joy_signed(1));
+	rx = deadzone_scale(joy_signed(2));
+	ry = deadzone_scale(joy_signed(3));
 
-	}
 }
 
 
