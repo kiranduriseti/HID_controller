@@ -12,6 +12,11 @@
 
 #include "buttons.h"
 #include "joystick.h"
+#include "usb_device.h"
+
+#include "usbd_customhid.h"
+
+extern USBD_HandleTypeDef hUsbDeviceFS;
 
 void print_loop () {
 	//if (fresh_data) {
@@ -20,7 +25,15 @@ void print_loop () {
 	//}
 }
 
+void send_report(){
+	joystick_report report = get_report();
+	buttons_update();
+	USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, 5);
+	HAL_Delay(5);
+}
+
 void main_loop(void){
+	send_report();
 
 	//UART_print("Hello World\r\n");
 	//UART_print("Testing Buffer\r\n");

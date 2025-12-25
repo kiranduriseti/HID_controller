@@ -9,12 +9,23 @@
 #define INC_JOYSTICK_H_
 
 #include <stdint.h>
-extern volatile uint8_t fresh_data;
+//extern volatile uint8_t fresh_data;
+
+typedef struct {
+	uint8_t buttons;
+
+	int8_t lx;
+	int8_t ly;
+
+	int8_t rx;
+	int8_t ry;
+} joystick_report;
 
 void joystick_start_scan(void);
 void joystick_update(void);
 void joystick_print(void);
 int16_t joy_signed(uint8_t ch);
 uint16_t joy_raw(uint8_t ch);
+joystick_report get_report(void);
 
 #endif /* INC_JOYSTICK_H_ */
