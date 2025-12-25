@@ -14,11 +14,11 @@
 typedef struct {
 	uint8_t buttons;
 
-	int8_t lx;
-	int8_t ly;
+	int16_t lx;
+	int16_t ly;
 
-	int8_t rx;
-	int8_t ry;
+	int16_t rx;
+	int16_t ry;
 } joystick_report;
 
 void joystick_start_scan(void);

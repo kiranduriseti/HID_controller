@@ -5,7 +5,6 @@
  *      Author: Kiran Duriseti
  */
 
-#include "UART_print.h"
 #include <string.h>
 #include <stdio.h>
 #include "stm32f4xx_hal.h"
@@ -14,111 +13,60 @@
 
 //ABXY+-
 #define num_buttons 6
-#define debounce 10
+#define debounce 5
 
-#define A GPIO_PIN_3
-#define B GPIO_PIN_4
-#define X GPIO_PIN_5
-#define Y GPIO_PIN_6
-#define plus GPIO_PIN_8
-#define minus GPIO_PIN_9
+volatile int buttons [num_buttons] = {0};
 
-//uint32_t pins[num_buttons] = {A, B, X, Y, plus, minus};
-int buttons [num_buttons] = {0};
-
-uint32_t pending_time [num_buttons] = {0};
-uint32_t pending[num_buttons] = {0};
-
-static uint8_t  last_raw[num_buttons] = {0};          // 0/1 raw pressed?
-static uint32_t last_change_ms[num_buttons] = {0};    // when raw last changed
+uint8_t  last_raw[num_buttons] = {0};
+uint32_t last_change_ms[num_buttons] = {0};
 
 
-static GPIO_TypeDef* ports[num_buttons] = {
+GPIO_TypeDef* ports[num_buttons] = {
   A_GPIO_Port, B_GPIO_Port, X_GPIO_Port, Y_GPIO_Port, plus_GPIO_Port, minus_GPIO_Port
 };
 
-static uint16_t pins[num_buttons] = {
+uint16_t pins[num_buttons] = {
   A_Pin, B_Pin, X_Pin, Y_Pin, plus_Pin, minus_Pin
 };
 
-void buttons_update(void){
-  for (uint8_t i = 0; i < num_buttons; i++) {
-    buttons[i] = (HAL_GPIO_ReadPin(ports[i], pins[i]) == GPIO_PIN_RESET) ? 1 : 0; // active-low
-  }
+uint8_t raw_pressed(uint8_t i) {
+    return (HAL_GPIO_ReadPin(GPIOB, pins[i]) == GPIO_PIN_RESET) ? 1 : 0;
 }
 
-//static inline uint8_t raw_pressed(uint8_t i) {
-//    // active-low button: pressed when pin reads RESET
-//    return (HAL_GPIO_ReadPin(GPIOB, pins[i]) == GPIO_PIN_RESET) ? 1 : 0;
-//}
-//
-//void buttons_update(void) {
-////    uint32_t now = HAL_GetTick();
-////
-////    for (uint8_t i = 0; i < num_buttons; i++) {
-////        uint8_t raw = raw_pressed(i);
-////
-////        // if raw input changed, restart stability timer
-////        if (raw != last_raw[i]) {
-////            last_raw[i] = raw;
-////            last_change_ms[i] = now;
-////        }
-////
-////        // if raw has been stable long enough, commit it
-////        if ((now - last_change_ms[i]) >= debounce) {
-////            buttons[i] = raw;   // 1 while held, 0 when released
-////        }
-////    }
-//	for (uint8_t i = 0; i < num_buttons; i++) {
-//		buttons[i] = HAL_GPIO_ReadPin(GPIOB, pins[i]);
-//	}
-//}
-//void buttons_update(void){
-//	uint32_t now = HAL_GetTick();
-//
-//	for (uint8_t i = 0; i < num_buttons; i++) {
-//		if (!pending[i]) continue;
-//
-//		if ((now - pending_time[i]) < debounce) continue;
-//
-//		int state = HAL_GPIO_ReadPin(GPIOB, pins[i]);
-//		buttons[i] = (state == 0) ? 1 : 0;
-//
-//		pending[i] = 0;
-//		//fresh_data = 1;
-//	}
-//}
-//
-//void HAL_GPIO_EXTI_Callback(uint16_t GPIO_Pin){
-//	uint32_t now = HAL_GetTick();
-//
-//	for (int i = 0; i < num_buttons; i++) {
-//		if (GPIO_Pin == pins[i]){
-//			pending[i] = 1;
-//			pending_time[i] = now;
-//			break;
-//		}
-//	}
-//
-//}
-//
-//void buttons_print(void){
-//	//fresh_data = 0;
-//	char msg[64];
-//	snprintf(msg, sizeof(msg),
-//			 "A:%d B:%d X:%d Y:%d +:%d -:%d\r\n",
-//			 buttons[0], buttons[1], buttons[2],
-//			 buttons[3], buttons[4], buttons[5]);
-//	//UART_print(msg);
-//	printf(msg);
-//}
+void buttons_update(void) {
+    uint32_t now = HAL_GetTick();
+
+    for (uint8_t i = 0; i < num_buttons; i++) {
+        uint8_t raw = raw_pressed(i);
+
+        // if raw input changed, restart stability timer
+        if (raw != last_raw[i]) {
+            last_raw[i] = raw;
+            last_change_ms[i] = now;
+        }
+
+        // if raw has been stable long enough, commit it
+        if ((now - last_change_ms[i]) >= debounce) {
+            buttons[i] = raw;   // 1 while held, 0 when released
+        }
+    }
+}
+
+void buttons_print(void){
+	char msg[64];
+	snprintf(msg, sizeof(msg),
+			 "A:%d B:%d X:%d Y:%d +:%d -:%d\r\n",
+			 buttons[0], buttons[1], buttons[2],
+			 buttons[3], buttons[4], buttons[5]);
+	printf(msg);
+}
 
 uint8_t get_report_buttons(void) {
-	uint8_t send = (uint8_t)((buttons[0] << 6) |
-						 	 (buttons[1] << 5) |
-							 (buttons[2] << 4) |
-							 (buttons[3] << 3) |
-							 (buttons[4] << 2) |
-							 (buttons[5] << 1));
+	uint8_t send = (uint8_t)((buttons[0] << 5) |
+						 	 (buttons[1] << 4) |
+							 (buttons[2] << 3) |
+							 (buttons[3] << 2) |
+							 (buttons[4] << 1) |
+							 (buttons[5])    );
 	return send;
 }
