@@ -27,6 +27,7 @@ void print_loop () {
 
 void send_report(){
 	joystick_report report = get_report();
+	buttons_update();
 	USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, 5);
 	HAL_Delay(5);
 }

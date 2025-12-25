@@ -76,7 +76,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
 		joystick_update();
 		//joystick_print();
 
-		buttons_update();
+		//buttons_update();
 		//buttons_print();
 
 		//send_report();
@@ -98,8 +98,8 @@ int16_t joy_signed(uint8_t ch) {
 void joystick_print(void) {
 	char msg[64];
 	snprintf(msg, sizeof(msg), "lx: %d, ly: %d, rx: %d, ry: %d\n", lx, ly, rx, ry);
-	UART_print(msg);
-
+	//UART_print(msg);
+	printf(msg);
 }
 
 void joystick_update(void) {

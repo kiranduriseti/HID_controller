@@ -63,7 +63,8 @@ void buttons_print(void){
 			 "A:%d B:%d X:%d Y:%d +:%d -:%d\r\n",
 			 buttons[0], buttons[1], buttons[2],
 			 buttons[3], buttons[4], buttons[5]);
-	UART_print(msg);
+	//UART_print(msg);
+	printf(msg);
 }
 
 uint8_t get_report_buttons(void) {
