@@ -74,10 +74,10 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
 	if (hadc->Instance == ADC1) {
 //		fresh_data = 1;
 		joystick_update();
-		joystick_print();
+		//joystick_print();
 
 		buttons_update();
-		buttons_print();
+		//buttons_print();
 
 		//send_report();
 	}
