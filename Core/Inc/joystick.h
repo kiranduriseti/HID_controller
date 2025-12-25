@@ -11,7 +11,7 @@
 #include <stdint.h>
 //extern volatile uint8_t fresh_data;
 
-typedef struct {
+typedef struct __attribute__((packed)){
 	uint8_t buttons;
 
 	int16_t lx;

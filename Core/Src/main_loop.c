@@ -21,7 +21,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 void send_report(){
 	joystick_report report = get_report();
 	buttons_update();
-	USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, 9);
+	USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, sizeof(report));
 	HAL_Delay(5);
 }
 
