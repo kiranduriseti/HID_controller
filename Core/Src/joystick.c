@@ -14,6 +14,7 @@
 #include "stm32f4xx_hal.h"
 #include "usb_device.h"
 #include "buttons.h"
+#include "joystick.h"
 
 //lx : PA0
 //ly : PA1
@@ -26,26 +27,14 @@
 #define deadzone (.015*ADC_max)
 #define clamp 32767
 
-extern USBD_HandleTypeDef hUsbDeviceFS;
-
 //volatile uint8_t fresh_data;
 
 uint16_t joystick_adc[channels] = {0};
 int16_t lx, ly, rx, ry;
 
-typedef struct {
-	uint8_t buttons;
+joystick_report report;
 
-	int8_t lx;
-	int8_t ly;
-
-	int8_t rx;
-	int8_t ry;
-} joystickReport;
-
-joystickReport report;
-
-void send_report(void) {
+joystick_report get_report(void) {
 	report.lx = lx;
 	report.ly = ly;
 
@@ -54,7 +43,7 @@ void send_report(void) {
 
 	report.buttons = get_report_buttons();
 
-	USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, 5);
+	return report;
 }
 
 int16_t deadzone_scale(int32_t x){
@@ -90,7 +79,7 @@ void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
 		buttons_update();
 		buttons_print();
 
-		send_report();
+		//send_report();
 	}
 }
 
