@@ -105,15 +105,15 @@ void joystick_print(void) {
 void joystick_update(void) {
 //	if (!fresh_data) return;
 //	fresh_data = 0;
-//	lx = deadzone_scale(joy_signed(0));
-//	ly = deadzone_scale(joy_signed(1));
-//	rx = deadzone_scale(joy_signed(2));
-//	ry = deadzone_scale(joy_signed(3));
+	lx = deadzone_scale(joy_signed(0));
+	ly = deadzone_scale(joy_signed(1));
+	rx = deadzone_scale(joy_signed(2));
+	ry = deadzone_scale(joy_signed(3));
 
-	lx = (joy_signed(0));
-	ly = (joy_signed(1));
-	rx = (joy_signed(2));
-	ry = (joy_signed(3));
+//	lx = (joy_signed(0));
+//	ly = (joy_signed(1));
+//	rx = (joy_signed(2));
+//	ry = (joy_signed(3));
 }
 
 

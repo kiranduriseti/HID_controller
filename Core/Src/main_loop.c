@@ -33,7 +33,14 @@ void send_report(){
 }
 
 void main_loop(void){
-	send_report();
+	//send_report();
+	while (1) {
+	    if (HAL_GPIO_ReadPin(GPIOB, GPIO_PIN_9) == GPIO_PIN_RESET)
+	        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_SET);
+	    else
+	        HAL_GPIO_WritePin(GPIOC, GPIO_PIN_13, GPIO_PIN_RESET);
+	}
+
 
 	//UART_print("Hello World\r\n");
 	//UART_print("Testing Buffer\r\n");
