@@ -19,9 +19,11 @@
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 static uint32_t last_ms = 0;
+uint8_t st;
 
 void send_report(){
-	if (!(hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED)) return;
+	buttons_update();
+	//if (!(hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED)) return;
 
 	uint32_t now = HAL_GetTick();
 	if ((now - last_ms) < 5)
@@ -29,9 +31,8 @@ void send_report(){
 	last_ms = now;
 
 	joystick_report report = get_report();
-	buttons_update();
-	USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, 9);
-	HAL_Delay(5);
+	st = USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, 9);
+	//HAL_Delay(5);
 }
 
 void main_loop(void){
