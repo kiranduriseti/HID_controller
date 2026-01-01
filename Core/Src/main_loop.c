@@ -23,7 +23,7 @@ uint8_t st;
 
 void send_report(){
 	buttons_update();
-	//if (!(hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED)) return;
+	if (!(hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED)) return;
 
 	uint32_t now = HAL_GetTick();
 	if ((now - last_ms) < 5)
