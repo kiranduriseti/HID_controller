@@ -38,8 +38,8 @@ int16_t bound (int x) {
 joystick_report Jr_update(joystick_report report) {
 	if (get_acc_state() == 0) return report;
 
-	ax = deadzone_scale(x_vel*(4095));
-	ay = deadzone_scale(y_vel*(4095));
+	ax = deadzone_scale(x_vel*(ADC_max));
+	ay = deadzone_scale(y_vel*(ADC_max));
 
 	report.lx = bound(ax + report.lx);
 	report.ly = bound(ay + report.ly);
