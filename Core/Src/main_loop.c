@@ -48,8 +48,8 @@ joystick_report Jr_update(joystick_report report) {
 	ax = deadzone_scale(x_vel);
 	ay = deadzone_scale(y_vel);
 
-	report.lx = bound(ax + report.lx);
-	report.ly = bound(ay + report.ly);
+	report.rx = bound(ax + report.rx);
+	report.ry = bound(ay + report.ry);
 
 	return report;
 }
