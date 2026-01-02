@@ -18,6 +18,7 @@
 
 volatile int buttons [num_buttons] = {0};
 int acc_state = 1;
+int last_acc = 0;
 
 uint8_t  last_raw[num_buttons] = {0};
 uint32_t last_change_ms[num_buttons] = {0};
@@ -90,7 +91,11 @@ uint8_t get_report_buttons(void) {
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN) {
 	if (GPIO_PIN == ACC_control_Pin) {
+		int now = HAL_GetTick();
 		//HAL_GPIO_TogglePin(ACC_control_GPIO_Port, ACC_control_Pin);
-		acc_state ^= 1;
+		if (now - last_acc > debounce){
+			last_acc = now;
+			acc_state ^= 1;
+		}
 	}
 }
