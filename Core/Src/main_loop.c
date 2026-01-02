@@ -31,7 +31,7 @@ int x_vel, y_vel;
 int ax, ay;
 
 #define acc_sens  800.0         // joystick counts per radian (tune)
-#define alpha_lp  0.15          // low-pass strength (0..1), higher = more responsive
+#define alpha_lp  0.01        	// low-pass strength (0..1), higher = more responsive
 #define dt_min_s  0.0005        // safety
 #define dt_max_s  0.050         // safety
 
