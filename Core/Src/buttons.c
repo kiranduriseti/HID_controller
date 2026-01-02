@@ -79,13 +79,17 @@ void buttons_print(void){
 	printf(msg);
 }
 
+
+//A, B, X, Y, plus, minus, Zr, Zl, r, l, home, capture, jl, jr : array order
+//A, B, X, Y, l, r, plus, minus, Zr, Zl, home, capture, jl, jr : report order
+//A 0->0, B 1->1, X 2->2, Y 3->3, l 9->4, 8->5, plus, minus, Zr, Zl, home, capture, jl, jr : report order
 uint8_t get_report_buttons(void) {
-	uint8_t send = (uint8_t)((buttons[0] << 5) |
-						 	 (buttons[1] << 4) |
-							 (buttons[2] << 3) |
-							 (buttons[3] << 2) |
-							 (buttons[4] << 1) |
-							 (buttons[5])    );
+	uint8_t send = (uint8_t)((buttons[0] << 0) |
+						 	 (buttons[1] << 1) |
+							 (buttons[2] << 2) |
+							 (buttons[3] << 3) |
+							 (buttons[9] << 4) |
+							 (buttons[8] << 5));
 	return send;
 }
 

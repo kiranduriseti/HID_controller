@@ -86,9 +86,9 @@ void joystick_print(void) {
 
 void joystick_update(void) {
 	lx = deadzone_scale(joy_signed(0));
-	ly = -deadzone_scale(joy_signed(1));
+	ly = deadzone_scale(joy_signed(1));
 	rx = deadzone_scale(joy_signed(2));
-	ry = -deadzone_scale(joy_signed(3));
+	ry = deadzone_scale(joy_signed(3));
 
 //	lx = (joy_raw(0));
 //	ly = (joy_raw(1));

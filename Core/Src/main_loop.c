@@ -96,7 +96,7 @@ void send_report(){
 
 	joystick_report report = get_report();
 	report = Jr_update(report);
-	st = USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, 9);
+	st = USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, sizeof(report));
 	//HAL_Delay(5);
 }
 
