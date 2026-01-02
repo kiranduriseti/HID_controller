@@ -13,50 +13,42 @@
 #include "accelerometer.h"
 
 //ABXY+-
-#define num_buttons 15
+#define num_buttons 14
 #define debounce 5
 
 volatile int buttons [num_buttons] = {0};
+int acc_state = 1;
 
 uint8_t  last_raw[num_buttons] = {0};
 uint32_t last_change_ms[num_buttons] = {0};
-
-int acc_state = 1;
 
 GPIO_TypeDef* ports[num_buttons] = {
   A_GPIO_Port, B_GPIO_Port, X_GPIO_Port, Y_GPIO_Port, plus_GPIO_Port,
   minus_GPIO_Port, Zr_GPIO_Port, Zl_GPIO_Port, r_GPIO_Port, l_GPIO_Port,
   home_GPIO_Port, capture_GPIO_Port, jl_GPIO_Port, jr_GPIO_Port,
-  ACC_control_GPIO_Port,
 };
 
 uint16_t pins[num_buttons] = {
   A_Pin, B_Pin, X_Pin, Y_Pin, plus_Pin, minus_Pin, Zr_Pin, Zl_Pin, r_Pin, l_Pin,
-  home_Pin, capture_Pin, jl_Pin, jr_Pin, ACC_control_Pin,
+  home_Pin, capture_Pin, jl_Pin, jr_Pin,
 };
 
 uint8_t raw_pressed(uint8_t i) {
-    return (HAL_GPIO_ReadPin(GPIOB, pins[i]) == GPIO_PIN_RESET) ? 1 : 0;
+    return (HAL_GPIO_ReadPin(ports[i], pins[i]) == GPIO_PIN_RESET) ? 1 : 0;
 }
 
-void ACC_button(){
-	if (buttons[num_buttons-1] == 1) {
-		if (acc_state == 1) {
-			StandBy();
-			acc_state = 0;
-		}
-		else {
-			Wake();
-			acc_state = 1;
-		}
+void ACC_power(void){
+	if (acc_state == 1) {
+		StandBy();
+	}
+	else {
+		Wake();
 	}
 }
 
 void buttons_update(void) {
     uint32_t now = HAL_GetTick();
-
-    ACC_button();
-
+    ACC_power();
     for (uint8_t i = 0; i < num_buttons; i++) {
         uint8_t raw = raw_pressed(i);
 
@@ -90,4 +82,11 @@ uint8_t get_report_buttons(void) {
 							 (buttons[4] << 1) |
 							 (buttons[5])    );
 	return send;
+}
+
+void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN) {
+	if (GPIO_PIN == ACC_control_Pin) {
+		//HAL_GPIO_TogglePin(ACC_control_GPIO_Port, ACC_control_Pin);
+		acc_state ^= 1;
+	}
 }

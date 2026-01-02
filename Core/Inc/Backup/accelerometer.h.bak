@@ -11,5 +11,6 @@
 void readValues(double* x, double* y, double* z);
 void initACC(void);
 void StandBy(void);
+void Wake(void);
 
 #endif /* INC_ACCELEROMETER_H_ */
