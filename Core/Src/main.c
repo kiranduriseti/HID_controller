@@ -17,11 +17,13 @@
   */
 #include "main_loop.h"
 #include "joystick.h"
+#include "accelerometer.h"
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
+#include "spi.h"
 #include "tim.h"
 #include "usb_device.h"
 #include "gpio.h"
@@ -96,8 +98,10 @@ int main(void)
   MX_ADC1_Init();
   MX_TIM3_Init();
   MX_USB_DEVICE_Init();
+  MX_SPI2_Init();
   /* USER CODE BEGIN 2 */
   joystick_start_scan();
+  initACC();
   /* USER CODE END 2 */
 
   /* Infinite loop */

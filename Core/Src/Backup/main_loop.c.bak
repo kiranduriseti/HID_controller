@@ -15,15 +15,18 @@
 #include "usb_device.h"
 
 #include "usbd_customhid.h"
+#include "accelerometer.h"
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
 static uint32_t last_ms = 0;
 uint8_t st;
+double x, y, z;
 
 void send_report(){
+	readValues(&x, &y, &z);
 	buttons_update();
-	if (!(hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED)) return;
+	//if (!(hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED)) return;
 
 	uint32_t now = HAL_GetTick();
 	if ((now - last_ms) < 5)

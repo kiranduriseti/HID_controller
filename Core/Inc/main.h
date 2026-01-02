@@ -57,6 +57,10 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define SPI_MOSI_Pin GPIO_PIN_1
+#define SPI_MOSI_GPIO_Port GPIOC
+#define SPI_MISO_Pin GPIO_PIN_2
+#define SPI_MISO_GPIO_Port GPIOC
 #define lx_Pin GPIO_PIN_0
 #define lx_GPIO_Port GPIOA
 #define ly_Pin GPIO_PIN_1
@@ -65,6 +69,28 @@ void Error_Handler(void);
 #define rx_GPIO_Port GPIOA
 #define ry_Pin GPIO_PIN_5
 #define ry_GPIO_Port GPIOA
+#define CS_Pin GPIO_PIN_6
+#define CS_GPIO_Port GPIOA
+#define SPI_CLK_Pin GPIO_PIN_10
+#define SPI_CLK_GPIO_Port GPIOB
+#define ACC_control_Pin GPIO_PIN_14
+#define ACC_control_GPIO_Port GPIOB
+#define l_Pin GPIO_PIN_15
+#define l_GPIO_Port GPIOB
+#define home_Pin GPIO_PIN_6
+#define home_GPIO_Port GPIOC
+#define capture_Pin GPIO_PIN_7
+#define capture_GPIO_Port GPIOC
+#define jr_Pin GPIO_PIN_8
+#define jr_GPIO_Port GPIOC
+#define jl_Pin GPIO_PIN_9
+#define jl_GPIO_Port GPIOC
+#define Zr_Pin GPIO_PIN_8
+#define Zr_GPIO_Port GPIOA
+#define Zl_Pin GPIO_PIN_9
+#define Zl_GPIO_Port GPIOA
+#define r_Pin GPIO_PIN_10
+#define r_GPIO_Port GPIOA
 #define A_Pin GPIO_PIN_3
 #define A_GPIO_Port GPIOB
 #define B_Pin GPIO_PIN_4
