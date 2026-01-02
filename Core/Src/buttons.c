@@ -14,7 +14,7 @@
 
 //ABXY+-
 #define num_buttons 14
-#define debounce 5
+#define debounce 10
 
 volatile int buttons [num_buttons] = {0};
 int acc_state = 1;
