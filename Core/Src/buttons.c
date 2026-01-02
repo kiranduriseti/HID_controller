@@ -37,6 +37,10 @@ uint8_t raw_pressed(uint8_t i) {
     return (HAL_GPIO_ReadPin(ports[i], pins[i]) == GPIO_PIN_RESET) ? 1 : 0;
 }
 
+int get_acc_state(void){
+	return acc_state;
+}
+
 void ACC_power(void){
 	if (acc_state == 1) {
 		StandBy();
