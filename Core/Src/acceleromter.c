@@ -103,7 +103,3 @@ void Wake(void) {
 	accWrite(Power_Ctrl, 0x08);
 }
 
-
-
-
-

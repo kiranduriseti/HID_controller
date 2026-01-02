@@ -11,6 +11,12 @@
 #include <stdint.h>
 //extern volatile uint8_t fresh_data;
 
+#define channels 4
+#define ADC_max 4095
+#define ADC_center (ADC_max/2 + 1)
+#define deadzone (.05*ADC_max)
+#define clamp 32767
+
 typedef struct __attribute__((packed)){
 	uint8_t buttons;
 
@@ -27,5 +33,6 @@ void joystick_print(void);
 int16_t joy_signed(uint8_t ch);
 uint16_t joy_raw(uint8_t ch);
 joystick_report get_report(void);
+int16_t deadzone_scale(int32_t x);
 
 #endif /* INC_JOYSTICK_H_ */

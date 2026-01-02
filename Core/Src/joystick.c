@@ -20,12 +20,6 @@
 //rx : PA4
 //ry : PA5
 
-#define channels 4
-#define ADC_max 4095
-#define ADC_center (ADC_max/2 + 1)
-#define deadzone (.05*ADC_max)
-#define clamp 32767
-
 uint16_t joystick_adc[channels] = {0};
 int16_t lx, ly, rx, ry;
 
