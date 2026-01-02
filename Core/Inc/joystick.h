@@ -18,7 +18,7 @@
 #define clamp 32767
 
 typedef struct __attribute__((packed)){
-	uint8_t buttons;
+	uint16_t buttons;
 
 	int16_t lx;
 	int16_t ly;
