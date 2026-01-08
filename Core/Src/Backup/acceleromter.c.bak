@@ -62,16 +62,6 @@ uint8_t accRead(uint8_t addr) {
 	return rx[1];
 }
 
-void initACC(void) {
-	accWrite(BW_Rate, 0x0A); //A = 1010 for 100Hz ODR
-	// set full range mode
-	accWrite(Data_Format, 0x08); //sets full resolution bit D3: 0000 1000
-	// enable measurement
-	accWrite(Power_Ctrl, 0x08); //sets measure bit D3: 0000 1000
-
-	CS_HIGH();
-}
-
 void readValues(double* x, double* y, double* z)
 {
     uint8_t tx[7]; //command + 6 data bytes
@@ -103,7 +93,13 @@ void Wake(void) {
 	accWrite(Power_Ctrl, 0x08);
 }
 
+void initACC(void) {
+	accWrite(BW_Rate, 0x0A); //A = 1010 for 100Hz ODR
+	// set full range mode
+	accWrite(Data_Format, 0x08); //sets full resolution bit D3: 0000 1000
+	// enable measurement
+	//accWrite(Power_Ctrl, 0x08); //sets measure bit D3: 0000 1000
+	Wake();
 
-
-
-
+	CS_HIGH();
+}

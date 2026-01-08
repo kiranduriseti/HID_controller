@@ -12,12 +12,31 @@
 #include "gpio.h"
 #include "accelerometer.h"
 
+typedef enum {
+    A = 0,
+    B,
+    X,
+    Y,
+    PLUS,
+    MINUS,
+    ZR,
+    ZL,
+    R,
+    L,
+    HOME,
+    CAPTURE,
+    JL,
+    JR,
+	BTN_COUNT
+} ButtonName;
+
 //ABXY+-
-#define num_buttons 14
-#define debounce 5
+#define num_buttons BTN_COUNT
+#define debounce 10
 
 volatile int buttons [num_buttons] = {0};
-volatile int acc_state = 1;
+int acc_state = 1;
+int last_acc = 0;
 
 uint8_t  last_raw[num_buttons] = {0};
 uint32_t last_change_ms[num_buttons] = {0};
@@ -37,9 +56,22 @@ uint8_t raw_pressed(uint8_t i) {
     return (HAL_GPIO_ReadPin(ports[i], pins[i]) == GPIO_PIN_RESET) ? 1 : 0;
 }
 
+int get_acc_state(void){
+	return acc_state;
+}
+
+void ACC_power(void){
+	if (acc_state == 1) {
+		StandBy();
+	}
+	else {
+		Wake();
+	}
+}
+
 void buttons_update(void) {
     uint32_t now = HAL_GetTick();
-
+    ACC_power();
     for (uint8_t i = 0; i < num_buttons; i++) {
         uint8_t raw = raw_pressed(i);
 
@@ -65,26 +97,39 @@ void buttons_print(void){
 	printf(msg);
 }
 
-uint8_t get_report_buttons(void) {
-	uint8_t send = (uint8_t)((buttons[0] << 5) |
-						 	 (buttons[1] << 4) |
-							 (buttons[2] << 3) |
-							 (buttons[3] << 2) |
-							 (buttons[4] << 1) |
-							 (buttons[5])    );
+
+//A, B, X, Y, plus, minus, Zr, Zl, r, l, home, capture, jl, jr : array order
+//A, B, X, Y, l, r, plus, minus, Zr, Zl, home, capture, jl, jr : report order
+//A 0->0, B 1->1, X 2->2, Y 3->3, l 9->4, 8->5, plus, minus, Zr, Zl, home, capture, jl, jr : report order
+
+//for x-box controller
+uint16_t get_report_buttons(void) {
+	uint16_t send = (uint16_t)((buttons[A] << 0) |
+						 	 (buttons[B] << 1) |
+							 (buttons[X] << 2) |
+							 (buttons[Y] << 3) |
+							 (buttons[L] << 4) |
+							 (buttons[R] << 5) |
+							 (buttons[ZL] << 6) |
+							 (buttons[ZR] << 7) |
+							 (buttons[MINUS] << 8) |
+							 (buttons[PLUS] << 9) |
+							 (buttons[JL] << 10) |
+							 (buttons[JR] << 11) |
+							 (buttons[HOME] << 12) | //up on d-pad
+							 (buttons[CAPTURE] << 13) ); //down on d-pad
+
+
 	return send;
 }
 
 void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN) {
 	if (GPIO_PIN == ACC_control_Pin) {
+		int now = HAL_GetTick();
 		//HAL_GPIO_TogglePin(ACC_control_GPIO_Port, ACC_control_Pin);
-		if (acc_state == 1) {
-			acc_state = 0;
-			StandBy();
-		}
-		else {
-			acc_state = 1;
-			Wake();
+		if (now - last_acc > debounce){
+			last_acc = now;
+			acc_state ^= 1;
 		}
 	}
 }

@@ -20,12 +20,6 @@
 //rx : PA4
 //ry : PA5
 
-#define channels 4
-#define ADC_max 4095
-#define ADC_center (ADC_max/2 + 1)
-#define deadzone (.05*ADC_max)
-#define clamp 32767
-
 uint16_t joystick_adc[channels] = {0};
 int16_t lx, ly, rx, ry;
 
@@ -92,9 +86,9 @@ void joystick_print(void) {
 
 void joystick_update(void) {
 	lx = deadzone_scale(joy_signed(0));
-	ly = -deadzone_scale(joy_signed(1));
+	ly = deadzone_scale(joy_signed(1));
 	rx = deadzone_scale(joy_signed(2));
-	ry = -deadzone_scale(joy_signed(3));
+	ry = deadzone_scale(joy_signed(3));
 
 //	lx = (joy_raw(0));
 //	ly = (joy_raw(1));

@@ -74,14 +74,14 @@ void MX_GPIO_Init(void)
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : home_Pin capture_Pin jr_Pin jl_Pin */
-  GPIO_InitStruct.Pin = home_Pin|capture_Pin|jr_Pin|jl_Pin;
+  /*Configure GPIO pins : home_Pin capture_Pin Zr_Pin Zl_Pin */
+  GPIO_InitStruct.Pin = home_Pin|capture_Pin|Zr_Pin|Zl_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOC, &GPIO_InitStruct);
 
-  /*Configure GPIO pins : Zr_Pin Zl_Pin r_Pin */
-  GPIO_InitStruct.Pin = Zr_Pin|Zl_Pin|r_Pin;
+  /*Configure GPIO pins : jr_Pin jl_Pin r_Pin */
+  GPIO_InitStruct.Pin = jr_Pin|jl_Pin|r_Pin;
   GPIO_InitStruct.Mode = GPIO_MODE_INPUT;
   GPIO_InitStruct.Pull = GPIO_PULLUP;
   HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);

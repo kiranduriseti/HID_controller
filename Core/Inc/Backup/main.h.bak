@@ -75,6 +75,7 @@ void Error_Handler(void);
 #define SPI_CLK_GPIO_Port GPIOB
 #define ACC_control_Pin GPIO_PIN_14
 #define ACC_control_GPIO_Port GPIOB
+#define ACC_control_EXTI_IRQn EXTI15_10_IRQn
 #define l_Pin GPIO_PIN_15
 #define l_GPIO_Port GPIOB
 #define home_Pin GPIO_PIN_6
