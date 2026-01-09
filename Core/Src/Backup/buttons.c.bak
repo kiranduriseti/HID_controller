@@ -12,21 +12,23 @@
 #include "gpio.h"
 #include "accelerometer.h"
 
+//ACC_control //
+//CS //
 typedef enum {
-    A = 0,
-    B,
-    X,
-    Y,
-    PLUS,
-    MINUS,
-    ZR,
-    ZL,
-    R,
-    L,
-    HOME,
-    CAPTURE,
-    JL,
-    JR,
+    A = 0, //
+    B,//
+    X,//
+    Y,//
+    PLUS,//
+    MINUS,//
+    ZR,//
+    ZL,//
+    R,//
+    L,//
+    HOME,//
+    CAPTURE,//
+    JL,//
+    JR,//
 	BTN_COUNT
 } ButtonName;
 

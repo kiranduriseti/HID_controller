@@ -23,6 +23,7 @@
 #include "main.h"
 #include "adc.h"
 #include "dma.h"
+#include "i2c.h"
 #include "spi.h"
 #include "tim.h"
 #include "usb_device.h"
@@ -99,6 +100,7 @@ int main(void)
   MX_TIM3_Init();
   MX_USB_DEVICE_Init();
   MX_SPI2_Init();
+  MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   joystick_start_scan();
   initACC();

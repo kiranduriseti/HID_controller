@@ -57,10 +57,15 @@ void Error_Handler(void);
 /* USER CODE END EFP */
 
 /* Private defines -----------------------------------------------------------*/
+#define ACC_control_Pin GPIO_PIN_0
+#define ACC_control_GPIO_Port GPIOC
+#define ACC_control_EXTI_IRQn EXTI0_IRQn
 #define SPI_MOSI_Pin GPIO_PIN_1
 #define SPI_MOSI_GPIO_Port GPIOC
 #define SPI_MISO_Pin GPIO_PIN_2
 #define SPI_MISO_GPIO_Port GPIOC
+#define CS_Pin GPIO_PIN_3
+#define CS_GPIO_Port GPIOC
 #define lx_Pin GPIO_PIN_0
 #define lx_GPIO_Port GPIOA
 #define ly_Pin GPIO_PIN_1
@@ -69,41 +74,36 @@ void Error_Handler(void);
 #define rx_GPIO_Port GPIOA
 #define ry_Pin GPIO_PIN_5
 #define ry_GPIO_Port GPIOA
-#define CS_Pin GPIO_PIN_6
-#define CS_GPIO_Port GPIOA
-#define SPI_CLK_Pin GPIO_PIN_10
-#define SPI_CLK_GPIO_Port GPIOB
-#define ACC_control_Pin GPIO_PIN_14
-#define ACC_control_GPIO_Port GPIOB
-#define ACC_control_EXTI_IRQn EXTI15_10_IRQn
-#define l_Pin GPIO_PIN_15
-#define l_GPIO_Port GPIOB
-#define home_Pin GPIO_PIN_6
-#define home_GPIO_Port GPIOC
-#define capture_Pin GPIO_PIN_7
-#define capture_GPIO_Port GPIOC
-#define jr_Pin GPIO_PIN_8
-#define jr_GPIO_Port GPIOC
-#define jl_Pin GPIO_PIN_9
-#define jl_GPIO_Port GPIOC
-#define Zr_Pin GPIO_PIN_8
-#define Zr_GPIO_Port GPIOA
-#define Zl_Pin GPIO_PIN_9
-#define Zl_GPIO_Port GPIOA
-#define r_Pin GPIO_PIN_10
-#define r_GPIO_Port GPIOA
-#define A_Pin GPIO_PIN_3
-#define A_GPIO_Port GPIOB
-#define B_Pin GPIO_PIN_4
-#define B_GPIO_Port GPIOB
-#define X_Pin GPIO_PIN_5
+#define jr_Pin GPIO_PIN_6
+#define jr_GPIO_Port GPIOA
+#define B_Pin GPIO_PIN_7
+#define B_GPIO_Port GPIOA
+#define Y_Pin GPIO_PIN_4
+#define Y_GPIO_Port GPIOC
+#define A_Pin GPIO_PIN_5
+#define A_GPIO_Port GPIOC
+#define X_Pin GPIO_PIN_0
 #define X_GPIO_Port GPIOB
-#define Y_Pin GPIO_PIN_6
-#define Y_GPIO_Port GPIOB
-#define plus_Pin GPIO_PIN_8
+#define r_Pin GPIO_PIN_1
+#define r_GPIO_Port GPIOB
+#define Zr_Pin GPIO_PIN_2
+#define Zr_GPIO_Port GPIOB
+#define SPI_CLK_Pin GPIO_PIN_13
+#define SPI_CLK_GPIO_Port GPIOB
+#define l_Pin GPIO_PIN_10
+#define l_GPIO_Port GPIOC
+#define Zl_Pin GPIO_PIN_11
+#define Zl_GPIO_Port GPIOC
+#define jl_Pin GPIO_PIN_3
+#define jl_GPIO_Port GPIOB
+#define home_Pin GPIO_PIN_4
+#define home_GPIO_Port GPIOB
+#define plus_Pin GPIO_PIN_5
 #define plus_GPIO_Port GPIOB
-#define minus_Pin GPIO_PIN_9
+#define minus_Pin GPIO_PIN_8
 #define minus_GPIO_Port GPIOB
+#define capture_Pin GPIO_PIN_9
+#define capture_GPIO_Port GPIOB
 
 /* USER CODE BEGIN Private defines */
 
