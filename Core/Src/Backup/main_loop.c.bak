@@ -30,6 +30,8 @@ int last_update = 0;
 int x_vel, y_vel;
 int ax, ay;
 
+uint8_t gx, gy, gz;
+
 #define acc_sens  800.0         // joystick counts per radian (tune)
 #define alpha_lp  0.01        	// low-pass strength (0..1), higher = more responsive
 #define dt_min_s  0.0005        // safety
@@ -103,7 +105,7 @@ void send_report(){
 void main_loop(void){
 	buttons_update();
 
-	ACC_joy();
+	if (!get_acc_state()) ACC_joy();
 
 	send_report();
 }

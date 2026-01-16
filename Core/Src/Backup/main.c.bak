@@ -18,6 +18,8 @@
 #include "main_loop.h"
 #include "joystick.h"
 #include "accelerometer.h"
+#include "mpu.h"
+
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
@@ -104,6 +106,8 @@ int main(void)
   /* USER CODE BEGIN 2 */
   joystick_start_scan();
   initACC();
+  //mpu_init();
+  mpu_init_gyro();
   /* USER CODE END 2 */
 
   /* Infinite loop */

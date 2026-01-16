@@ -1,0 +1,18 @@
+/*
+ * mpu.h
+ *
+ *  Created on: Jan 16, 2026
+ *      Author: Kiran Duriseti
+ */
+
+#ifndef INC_MPU_H_
+#define INC_MPU_H_
+
+void mpu_init_gyro(void);
+void mpu_init(void);
+void mpu_sleep(void);
+void mpu_wake(void);
+void read_gyro(int16_t *x, int16_t *y, int16_t *z);
+void read_acc(int16_t *x, int16_t *y, int16_t *z);
+
+#endif /* INC_MPU_H_ */
