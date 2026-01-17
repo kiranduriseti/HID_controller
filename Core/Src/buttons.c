@@ -11,6 +11,7 @@
 #include "joystick.h"
 #include "gpio.h"
 #include "accelerometer.h"
+#include "mpu.h"
 
 //ACC_control //
 //CS //
@@ -64,10 +65,13 @@ int get_acc_state(void){
 
 void ACC_power(void){
 	if (acc_state == 1) {
-		StandBy();
+		//StandBy();
+		mpu_sleep();
+
 	}
 	else {
-		Wake();
+		//Wake();
+		mpu_wake();
 	}
 }
 
