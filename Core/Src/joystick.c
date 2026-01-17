@@ -21,9 +21,27 @@
 //ry : PA5
 
 uint16_t joystick_adc[channels] = {0};
+static int32_t joy_bias[channels] = {0};
 int16_t lx, ly, rx, ry;
 
 joystick_report report;
+
+void joystick_calibrate(uint16_t samples)
+{
+    int64_t sum[channels] = {0};
+
+    for (uint16_t i = 0; i < samples; i++) {
+        for (uint8_t ch = 0; ch < channels; ch++) {
+            sum[ch] += joystick_adc[ch];
+        }
+        HAL_Delay(2);
+    }
+
+    for (uint8_t ch = 0; ch < channels; ch++) {
+        int32_t avg = sum[ch] / samples;
+        joy_bias[ch] = avg - ADC_center;   // signed center error
+    }
+}
 
 joystick_report get_report(void) {
 	report.lx = lx;
@@ -57,6 +75,7 @@ void joystick_start_scan(void) {
 	//HAL_ADCEx_Calibration_Start(&hadc1, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED);
 	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)joystick_adc, channels);
 	HAL_TIM_Base_Start(&htim3);
+	joystick_calibrate(20);
 }
 
 //whenever circular buffer completes cycle
@@ -74,6 +93,7 @@ uint16_t joy_raw(uint8_t ch){
 int16_t joy_signed(uint8_t ch) {
 	if(ch >= channels) return 0;
 	int32_t centered = (int32_t)joystick_adc[ch] - ADC_center;
+	centered -= joy_bias[ch];
 	return centered;
 }
 
