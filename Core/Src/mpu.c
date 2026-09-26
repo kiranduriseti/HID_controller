@@ -13,7 +13,7 @@
 #include "stm32f4xx_hal.h"
 
 #define MPU_add (0x68 << 1) //logic low
-#define mpu_timeout_ms 3U // bound sensor failures so buttons/USB remain responsive
+#define mpu_timeout_ms 3U
 #define ACK 0x75 //who am I
 #define power 0x6B
 #define power_2 0x6C
@@ -52,7 +52,7 @@ void mpu_write(uint8_t reg, uint8_t d){
 void mpu_sleep(void) {
 	//data = 64;
 	//HAL_I2C_Mem_Write(&hi2c2, MPU_add, power, 1, &Data, 1, HAL_MAX_DELAY);
-	mpu_write(power, awake_power | 0x40); // preserve clock/temperature configuration
+	mpu_write(power, awake_power | 0x40);
 }
 
 void mpu_wake(void) {
@@ -82,7 +82,7 @@ void mpu_calibrate_gyro(uint16_t samples)
         if (mpu_read_gyro(&rx, &ry) != HAL_OK) {
             mpu_status = HAL_ERROR;
             gyro_ready = 0;
-            return; // never use an uninitialized sample or divide an incomplete sum
+            return;
         }
 
         sx += rx;
@@ -141,7 +141,7 @@ void mpu_init_gyro(void){
 
 void mpu_init(void){
     awake_power = 0;
-    gyro_ready = 0; // legacy general initialization uses a different gyro range
+    gyro_ready = 0;
 	//HAL_I2C_Mem_Read(&hi2c2, MPU_add, ACK, 1, &check, 1, HAL_MAX_DELAY);
 	check = mpu_read(ACK);
 	mpu_wake();

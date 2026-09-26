@@ -39,7 +39,6 @@ void joystick_calibrate(uint16_t samples)
         HAL_Delay(2);
     }
 
-    /* Publish all biases together: the ADC callback must not see a partial update. */
     uint32_t primask = __get_PRIMASK();
     __disable_irq();
     for (uint8_t ch = 0; ch < channels; ch++) {
@@ -111,7 +110,6 @@ int16_t joy_signed(uint8_t ch) {
 	return centered;
 }
 
-
 void joystick_print(void) {
 	char msg[64];
 	snprintf(msg, sizeof(msg), "lx: %d, ly: %d, rx: %d, ry: %d\n", lx, ly, rx, ry);
@@ -129,5 +127,4 @@ void joystick_update(void) {
 //	rx = (joy_raw(2));
 //	ry = (joy_raw(3));
 }
-
 

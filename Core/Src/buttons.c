@@ -64,7 +64,7 @@ int get_acc_state(void){
 }
 
 void ACC_power(void){
-    /* Only write the power register on transitions; keep the original button API. */
+
     static int applied_state = -1;
     int requested_state = acc_state;
     if (requested_state == applied_state) return;
@@ -80,8 +80,7 @@ void ACC_power(void){
 
 void buttons_update(void) {
     uint32_t now = HAL_GetTick();
-    /* Debounce the active-low MPU toggle just like the other inputs.
-     * Toggle once per stable press; a stable release rearms it. */
+
     uint8_t raw_acc = HAL_GPIO_ReadPin(ACC_control_GPIO_Port, ACC_control_Pin) == GPIO_PIN_RESET;
     if (raw_acc != acc_last_raw) {
         acc_last_raw = raw_acc;
@@ -117,7 +116,6 @@ void buttons_print(void){
 	printf("%s", msg);
 }
 
-
 //A, B, X, Y, plus, minus, Zr, Zl, r, l, home, capture, jl, jr : array order
 //A, B, X, Y, l, r, plus, minus, Zr, Zl, home, capture, jl, jr : report order
 //A 0->0, B 1->1, X 2->2, Y 3->3, l 9->4, 8->5, plus, minus, Zr, Zl, home, capture, jl, jr : report order
@@ -138,7 +136,6 @@ uint16_t get_report_buttons(void) {
 							 (buttons[JR] << 11) |
 							 (buttons[HOME] << 12) | //up on d-pad
 							 (buttons[CAPTURE] << 13) ); //down on d-pad
-
 
 	return send;
 }

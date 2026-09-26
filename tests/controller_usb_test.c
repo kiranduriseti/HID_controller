@@ -1,4 +1,3 @@
-/* Host-side USB transport mock. Compile the production application source. */
 #define __USBD_CUSTOM_HID_IF_H__
 #define __USB_CUSTOMHID_H
 #define __USBD_DESC__C__
@@ -43,7 +42,6 @@ typedef struct {
     int8_t (*Init)(void);
     int8_t (*DeInit)(void);
     int8_t (*OutEvent)(uint8_t, uint8_t);
-    uint8_t *(*GetReport)(uint16_t *);
 } USBD_CUSTOM_HID_ItfTypeDef;
 typedef struct {
     uint8_t *(*GetDeviceDescriptor)(USBD_SpeedTypeDef, uint16_t *);
@@ -72,8 +70,8 @@ static int USBD_Init(USBD_HandleTypeDef *d, USBD_DescriptorsTypeDef *desc, unsig
 static int USBD_RegisterClass(USBD_HandleTypeDef *d, USBD_ClassTypeDef *c) { (void)d; registered_class=c; return USBD_OK; }
 static int USBD_CUSTOM_HID_RegisterInterface(USBD_HandleTypeDef *d, USBD_CUSTOM_HID_ItfTypeDef *f) { (void)d; (void)f; return USBD_OK; }
 static int USBD_Start(USBD_HandleTypeDef *d) { (void)d; return USBD_OK; }
-#include "reference_pc_descriptor.h"
-static USBD_CUSTOM_HID_ItfTypeDef USBD_CustomHID_fops_FS = { .pReport = pc_report_descriptor };
+static uint8_t mock_pc_descriptor[USBD_CUSTOM_HID_REPORT_DESC_SIZE] = {0};
+static USBD_CUSTOM_HID_ItfTypeDef USBD_CustomHID_fops_FS = { .pReport = mock_pc_descriptor };
 static uint32_t __get_PRIMASK(void) { return 0; }
 static void __disable_irq(void) {}
 static void __set_PRIMASK(uint32_t p) { (void)p; }
@@ -125,12 +123,14 @@ int main(void)
     transport.state = CUSTOM_HID_IDLE;
     controller_usb_send(&input, 20);
     assert(sends == 2 && in_flight[0] == 1 && in_flight[2] == 0xff);
+    transport.state = CUSTOM_HID_IDLE;
+    assert(controller_usb_send(&input, 21) == USBD_BUSY && sends == 2);
     uint16_t length = 64;
     uint8_t *control = hid_get_report(&length);
     memcpy(saved, control, 10);
     input.buttons = 2; transport.state = CUSTOM_HID_IDLE;
     controller_usb_send(&input, 25);
-    assert(memcmp(saved, control, 10) == 0); /* EP0 cannot alias IN storage. */
+    assert(memcmp(saved, control, 10) == 0);
     controller_usb_toggle(100);
     assert(stops == 1 && controller_usb_mode() == CONTROLLER_SWITCH);
     controller_usb_poll(349); assert(starts == 0);
@@ -140,7 +140,8 @@ int main(void)
     configure(); controller_usb_send(&input, 351);
     assert(in_flight_length == 8 && in_flight[0] == 0 && in_flight[2] == 8 && in_flight[3] == 128);
     transport.state = CUSTOM_HID_IDLE;
-    fail_send = true; controller_usb_send(&input, 352); assert(sends == 4);
+    fail_send = true; assert(controller_usb_send(&input, 352) == USBD_FAIL);
+    assert(sends == 4 && transport.state == CUSTOM_HID_IDLE);
     fail_send = false; controller_usb_send(&input, 352); assert(sends == 5);
     assert(in_flight[0] == 2 && in_flight[3] == 255 && in_flight[4] == 0);
     controller_usb_toggle(UINT32_MAX - 99U);
@@ -149,7 +150,7 @@ int main(void)
     assert(controller_usb_mode() == CONTROLLER_PC && controller_usb_report_descriptor_size() == 56);
     USBD_SetupReqTypedef request = {0x81, USB_REQ_GET_DESCRIPTOR, 0x2200, 0, 255};
     assert(registered_class->Setup(&hUsbDeviceFS, &request) == USBD_OK && control_length == 56);
-    assert(control_data == pc_report_descriptor);
+    assert(control_data == mock_pc_descriptor);
     mode = CONTROLLER_SWITCH; controller_usb_prepare();
     assert(registered_class->Setup(&hUsbDeviceFS, &request) == USBD_OK && control_length == 86);
     request.wLength = 7;
@@ -161,7 +162,7 @@ int main(void)
     request.wValue = 0x0200;
     assert(registered_class->Setup(&hUsbDeviceFS, &request) == USBD_FAIL && stalls == 1);
     request.bRequest = 10; registered_class->Setup(&hUsbDeviceFS, &request); assert(forwarded == 1);
-    assert(USBD_CUSTOM_HID.Setup == fallback_setup); /* Stock class was never mutated. */
+    assert(USBD_CUSTOM_HID.Setup == fallback_setup);
     puts("PASS: unconfigured/busy/failing USB, buffer lifetime, EP0 isolation, neutral startup, reconnect and rollover");
     return 0;
 }

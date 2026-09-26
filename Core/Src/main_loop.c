@@ -35,7 +35,6 @@ volatile HAL_StatusTypeDef r68 = HAL_OK;
 volatile HAL_StatusTypeDef r69 = HAL_OK;
 volatile uint8_t i2c_checked = 0;
 
-
 #define deadzone_gyro 2.0
 #define sens_gyro_x .85
 #define sens_gyro_y .6
@@ -77,7 +76,7 @@ void mpu_joy(void){
     }
 	debugger = mpu_read_gyro(&mpu_x, &mpu_y);
     if (debugger != HAL_OK) {
-        gyro_x = gyro_y = 0; // invalid sensor data must not keep steering the stick
+        gyro_x = gyro_y = 0;
         return;
     }
 
@@ -85,7 +84,6 @@ void mpu_joy(void){
 
 	fx = (float)(mpu_x - gyro_bias_x)/scaler;
 	fy = (float)(mpu_y - gyro_bias_y)/scaler;
-
 
 	fx = deadzone_mpu(fx);
 	fy = deadzone_mpu(fy);
@@ -99,7 +97,6 @@ void mpu_joy(void){
 
 	gyro_x = bound((int)(gy_counts * sens_gyro_x));
 	gyro_y = bound((int)(gx_counts * sens_gyro_y));
-
 
 }
 
@@ -128,7 +125,6 @@ void main_loop(void){
     if (mode_gesture_update(&mode_hold, get_report_buttons(), now))
         controller_usb_toggle(now);
     controller_usb_poll(now);
-
 
 	if (!get_acc_state()) mpu_joy();
 

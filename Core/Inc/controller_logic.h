@@ -8,7 +8,6 @@ typedef enum { CONTROLLER_PC, CONTROLLER_SWITCH } controller_mode;
 #define MODE_BUTTONS ((1U << 8) | (1U << 9))
 typedef struct { uint32_t since; bool tracking; bool latched; } mode_gesture;
 
-/* Release BOTH buttons before rearming; subtraction handles tick rollover. */
 static inline bool mode_gesture_update(mode_gesture *g, uint16_t buttons, uint32_t now)
 {
     uint16_t held = buttons & MODE_BUTTONS;
@@ -26,7 +25,6 @@ static inline uint8_t switch_axis(int16_t value)
     return (uint8_t)(((int32_t)value + 32768) >> 8);
 }
 
-/* Explicit little-endian serialization; internal state keeps PC button order. */
 static inline uint16_t encode_pc_report(uint8_t *out, const joystick_report *s)
 {
     uint16_t values[5] = {s->buttons, (uint16_t)s->lx, (uint16_t)s->ly,
@@ -43,7 +41,7 @@ static inline uint16_t encode_switch_report(uint8_t *out, const joystick_report 
                | (s->buttons & 2U) | ((s->buttons & 4U) << 1)
                | ((s->buttons & 8U) >> 3);
     out[0] = (uint8_t)b; out[1] = (uint8_t)(b >> 8);
-    out[2] = 8; /* No physical D-pad: neutral hat. */
+    out[2] = 8;
     out[3] = switch_axis(s->lx); out[4] = switch_axis(s->ly);
     out[5] = switch_axis(s->rx); out[6] = switch_axis(s->ry);
     out[7] = 0;

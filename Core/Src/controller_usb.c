@@ -12,7 +12,7 @@ extern USBD_HandleTypeDef hUsbDeviceFS;
 static controller_mode mode = CONTROLLER_PC;
 static bool reconnecting, neutral_pending = true;
 static uint32_t disconnected_at, last_report_ms;
-/* The USB FIFO ISR reads full words; reserve aligned padding past either report. */
+
 static uint8_t tx_buffer[64] __attribute__((aligned(4)));
 static uint8_t control_buffer[64] __attribute__((aligned(4)));
 static uint8_t latest_report[64] __attribute__((aligned(4)));
@@ -63,7 +63,7 @@ uint8_t *controller_usb_hid_descriptor(void)
 }
 static int8_t hid_init(void)
 {
-    /* ST's allocator uses static storage; clear class state on every configuration. */
+
     USBD_CUSTOM_HID_HandleTypeDef *hid = hUsbDeviceFS.pClassDataCmsit[hUsbDeviceFS.classId];
     if (hid != NULL) memset(hid, 0, sizeof(*hid));
     neutral_pending = true;
@@ -79,7 +79,7 @@ static int8_t hid_out(uint8_t event, uint8_t state)
 }
 static uint8_t *hid_get_report(uint16_t *length)
 {
-    /* Separate EP0 storage remains stable while interrupt IN reports change. */
+
     memcpy(control_buffer, latest_report, latest_length);
     *length = latest_length;
     return control_buffer;
@@ -94,8 +94,6 @@ static void controller_usb_prepare(void)
     (void)hid_init();
 }
 
-/* Override only profile-dependent requests. All other HID requests and endpoint
- * callbacks remain in the unmodified ST class. No copied/forked middleware. */
 static uint8_t controller_setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *req)
 {
     uint8_t *data = NULL;
@@ -111,7 +109,7 @@ static uint8_t controller_setup(USBD_HandleTypeDef *pdev, USBD_SetupReqTypedef *
         }
     } else if ((req->bmRequest & USB_REQ_TYPE_MASK) == USB_REQ_TYPE_CLASS &&
                req->bRequest == CUSTOM_HID_REQ_GET_REPORT) {
-        if (req->wValue != 0x0100U) { /* unnumbered INPUT report */
+        if (req->wValue != 0x0100U) {
             USBD_CtlError(pdev, req);
             return USBD_FAIL;
         }
@@ -163,7 +161,7 @@ void controller_usb_init(void)
 void controller_usb_toggle(uint32_t now)
 {
     if (reconnecting) return;
-    /* DeInit disconnects and cancels transfers before descriptors/buffers change. */
+
     if (USBD_DeInit(&hUsbDeviceFS) != USBD_OK) Error_Handler();
     mode = mode == CONTROLLER_PC ? CONTROLLER_SWITCH : CONTROLLER_PC;
     disconnected_at = now;
@@ -181,14 +179,14 @@ uint8_t controller_usb_send(const joystick_report *state, uint32_t now)
     if (reconnecting) return USBD_BUSY;
     uint8_t result = USBD_BUSY;
     uint32_t primask = __get_PRIMASK();
-    __disable_irq(); /* Serialize against reset, GET_REPORT and IN completion. */
+    __disable_irq();
     uint32_t interval = mode == CONTROLLER_SWITCH ? 1U : 5U;
     USBD_CUSTOM_HID_HandleTypeDef *hid = hUsbDeviceFS.pClassDataCmsit[hUsbDeviceFS.classId];
     if (hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED && hid != NULL &&
         hid->state == CUSTOM_HID_IDLE && (uint32_t)(now - last_report_ms) >= interval) {
         joystick_report neutral = {0};
         uint16_t length = encode(tx_buffer, neutral_pending ? &neutral : state);
-        /* Use ST's completion callback, but propagate low-level send errors. */
+
         hid->state = CUSTOM_HID_BUSY;
         result = USBD_LL_Transmit(&hUsbDeviceFS, CUSTOM_HID_EPIN_ADDR, tx_buffer, length);
         if (result == USBD_OK) {
