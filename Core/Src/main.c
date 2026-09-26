@@ -15,10 +15,6 @@
   *
   ******************************************************************************
   */
-#include "main_loop.h"
-#include "joystick.h"
-#include "accelerometer.h"
-#include "mpu.h"
 
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
@@ -33,6 +29,9 @@
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
+#include "main_loop.h"
+#include "joystick.h"
+#include "mpu.h"
 
 /* USER CODE END Includes */
 
@@ -105,7 +104,6 @@ int main(void)
   MX_I2C2_Init();
   /* USER CODE BEGIN 2 */
   joystick_start_scan();
-  initACC();
   //mpu_init();
   mpu_init_gyro();
   /* USER CODE END 2 */

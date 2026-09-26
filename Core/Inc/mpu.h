@@ -17,6 +17,10 @@ void mpu_wake(void);
 HAL_StatusTypeDef mpu_read_gyro(int16_t *x, int16_t *y);
 void mpu_read_acc(int16_t *x, int16_t *y, int16_t *z);
 
+HAL_StatusTypeDef mpu_get_status(void);
+uint8_t mpu_gyro_ready(void);
+void mpu_calibrate_gyro(uint16_t samples);
+
 extern int32_t gyro_bias_x;
 extern int32_t gyro_bias_y;
 

@@ -8,6 +8,8 @@
 #ifndef INC_BUTTONS_H_
 #define INC_BUTTONS_H_
 
+#include <stdint.h>
+
 void buttons_update(void);
 void buttons_print(void);
 uint16_t get_report_buttons(void);

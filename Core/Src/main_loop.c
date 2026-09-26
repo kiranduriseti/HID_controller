@@ -15,7 +15,7 @@
 #include "usb_device.h"
 
 #include "usbd_customhid.h"
-#include "accelerometer.h"
+#include "controller_usb.h"
 #include "stm32f4xx_hal.h"
 #include <math.h>
 #include "mpu.h"
@@ -23,9 +23,8 @@
 
 extern USBD_HandleTypeDef hUsbDeviceFS;
 
-static uint32_t last_ms = 0;
+static mode_gesture mode_hold;
 uint8_t st;
-double x, y, z;
 
 int16_t gyro_x, gyro_y;
 int16_t mpu_x, mpu_y, mpu_z;
@@ -36,16 +35,6 @@ volatile HAL_StatusTypeDef r68 = HAL_OK;
 volatile HAL_StatusTypeDef r69 = HAL_OK;
 volatile uint8_t i2c_checked = 0;
 
-
-int last_update = 0;
-#define delta 5
-int x_vel, y_vel;
-int ax, ay;
-
-#define acc_sens  800.0         // joystick counts per radian (tune)
-#define alpha_lp  0.01        	// low-pass strength (0..1), higher = more responsive
-#define dt_min_s  0.0005        // safety
-#define dt_max_s  0.050         // safety
 
 #define deadzone_gyro 2.0
 #define sens_gyro_x .85
@@ -63,13 +52,6 @@ int16_t bound (int x) {
 joystick_report Jr_update(joystick_report report) {
 	if (get_acc_state() == 1) return report;
 
-	//ax = deadzone_scale(x_vel*(ADC_max));
-	//ay = deadzone_scale(y_vel*(ADC_max));
-//	ax = deadzone_scale(x_vel);
-//	ay = deadzone_scale(y_vel);
-
-//	report.rx = bound(ax + report.rx);
-//	report.ry = bound(ay + report.ry);
 	report.rx = bound(gyro_x + report.rx);
 	report.ry = bound(gyro_y + report.ry);
 
@@ -89,11 +71,15 @@ double deadzone_mpu(double v) {
 }
 
 void mpu_joy(void){
-//	int now = HAL_GetTick();
-//	if (now - last_update < delta) return;
-
+    if (!mpu_gyro_ready() || mpu_get_status() != HAL_OK) {
+        gyro_x = gyro_y = 0;
+        return;
+    }
 	debugger = mpu_read_gyro(&mpu_x, &mpu_y);
-	//last_update = now;
+    if (debugger != HAL_OK) {
+        gyro_x = gyro_y = 0; // invalid sensor data must not keep steering the stick
+        return;
+    }
 
 	float fx, fy;
 
@@ -117,50 +103,12 @@ void mpu_joy(void){
 
 }
 
-void ACC_joy(void) {
-	int now = HAL_GetTick();
-	if (now - last_update < delta) return;
-
-	double dt = (now - last_update)/1000.0;
-
-	readValues(&x, &y, &z);
-	last_update = now;
-
-	if (dt < dt_min_s) dt = dt_min_s;
-	if (dt > dt_max_s) dt = dt_max_s;
-
-	 /* --- tilt estimate from gravity vector --- */
-	double roll  = atan2(y, z);
-	double pitch = atan2(-x, sqrt(y*y + z*z));
-
-	/* convert radians -> joystick counts */
-	int raw_ax = (int)(acc_sens * roll);
-	int raw_ay = (int)(acc_sens * pitch);
-
-	x_vel += x * dt;
-	y_vel += y * dt;
-
-	/*
-	 * Low-pass filter (EMA):
-	 * filtered = filtered + alpha*(raw - filtered)
-	 * Using your x_vel/y_vel variables as the filtered offsets.
-	 */
-	x_vel = (int)((double)x_vel + alpha_lp * ((double)raw_ax - (double)x_vel));
-	y_vel = (int)((double)y_vel + alpha_lp * ((double)raw_ay - (double)y_vel));
-
-}
-
 void send_report(void){
-	//if (!(hUsbDeviceFS.dev_state == USBD_STATE_CONFIGURED)) return;
-	uint32_t now = HAL_GetTick();
-	if ((now - last_ms) < 5)
-		return;
-	last_ms = now;
-
-	joystick_report report = get_report();
-	report = Jr_update(report);
-	st = USBD_CUSTOM_HID_SendReport(&hUsbDeviceFS, (uint8_t *)&report, sizeof(report));
-	//HAL_Delay(5);
+    joystick_report report = get_report();
+    report = Jr_update(report);
+    if (mode_hold.latched || (report.buttons & MODE_BUTTONS) == MODE_BUTTONS)
+        report.buttons &= (uint16_t)~MODE_BUTTONS;
+    st = controller_usb_send(&report, HAL_GetTick());
 }
 
 void main_loop(void){
@@ -176,8 +124,11 @@ void main_loop(void){
 //	}
 
 	buttons_update();
+    uint32_t now = HAL_GetTick();
+    if (mode_gesture_update(&mode_hold, get_report_buttons(), now))
+        controller_usb_toggle(now);
+    controller_usb_poll(now);
 
-	//if (!get_acc_state()) ACC_joy();
 
 	if (!get_acc_state()) mpu_joy();
 

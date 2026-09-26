@@ -10,7 +10,6 @@
 #include "stm32f4xx_hal.h"
 #include "joystick.h"
 #include "gpio.h"
-#include "accelerometer.h"
 #include "mpu.h"
 
 //ACC_control //
@@ -38,8 +37,9 @@ typedef enum {
 #define debounce 10
 
 volatile int buttons [num_buttons] = {0};
-int acc_state = 1;
-int last_acc = 0;
+volatile int acc_state = 1;
+static uint32_t last_acc = 0;
+static uint8_t acc_last_raw = 0, acc_pressed = 0;
 
 uint8_t  last_raw[num_buttons] = {0};
 uint32_t last_change_ms[num_buttons] = {0};
@@ -64,19 +64,33 @@ int get_acc_state(void){
 }
 
 void ACC_power(void){
-	if (acc_state == 1) {
-		//StandBy();
+    /* Only write the power register on transitions; keep the original button API. */
+    static int applied_state = -1;
+    int requested_state = acc_state;
+    if (requested_state == applied_state) return;
+    applied_state = requested_state;
+	if (requested_state == 1) {
 		mpu_sleep();
 
 	}
 	else {
-		//Wake();
 		mpu_wake();
 	}
 }
 
 void buttons_update(void) {
     uint32_t now = HAL_GetTick();
+    /* Debounce the active-low MPU toggle just like the other inputs.
+     * Toggle once per stable press; a stable release rearms it. */
+    uint8_t raw_acc = HAL_GPIO_ReadPin(ACC_control_GPIO_Port, ACC_control_Pin) == GPIO_PIN_RESET;
+    if (raw_acc != acc_last_raw) {
+        acc_last_raw = raw_acc;
+        last_acc = now;
+    }
+    if ((uint32_t)(now - last_acc) >= debounce && raw_acc != acc_pressed) {
+        acc_pressed = raw_acc;
+        if (acc_pressed) acc_state ^= 1;
+    }
     ACC_power();
     for (uint8_t i = 0; i < num_buttons; i++) {
         uint8_t raw = raw_pressed(i);
@@ -100,7 +114,7 @@ void buttons_print(void){
 			 "A:%d B:%d X:%d Y:%d +:%d -:%d\r\n",
 			 buttons[0], buttons[1], buttons[2],
 			 buttons[3], buttons[4], buttons[5]);
-	printf(msg);
+	printf("%s", msg);
 }
 
 
@@ -127,15 +141,4 @@ uint16_t get_report_buttons(void) {
 
 
 	return send;
-}
-
-void HAL_GPIO_EXTI_Callback(uint16_t GPIO_PIN) {
-	if (GPIO_PIN == ACC_control_Pin) {
-		int now = HAL_GetTick();
-		//HAL_GPIO_TogglePin(ACC_control_GPIO_Port, ACC_control_Pin);
-		if (now - last_acc > debounce){
-			last_acc = now;
-			acc_state ^= 1;
-		}
-	}
 }

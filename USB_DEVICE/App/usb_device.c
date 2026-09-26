@@ -27,6 +27,7 @@
 #include "usbd_custom_hid_if.h"
 
 /* USER CODE BEGIN Includes */
+#include "controller_usb.h"
 
 /* USER CODE END Includes */
 
@@ -64,6 +65,9 @@ USBD_HandleTypeDef hUsbDeviceFS;
 void MX_USB_DEVICE_Init(void)
 {
   /* USER CODE BEGIN USB_DEVICE_Init_PreTreatment */
+  /* The application selects the descriptors/class before USB connects. */
+  controller_usb_init();
+  return;
 
   /* USER CODE END USB_DEVICE_Init_PreTreatment */
 

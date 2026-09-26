@@ -20,14 +20,16 @@
 //rx : PA4
 //ry : PA5
 
-uint16_t joystick_adc[channels] = {0};
+volatile uint16_t joystick_adc[channels] = {0};
+static volatile uint8_t scan_ready;
 static int32_t joy_bias[channels] = {0};
-int16_t lx, ly, rx, ry;
+volatile int16_t lx, ly, rx, ry;
 
 joystick_report report;
 
 void joystick_calibrate(uint16_t samples)
 {
+    if (samples == 0) return;
     int64_t sum[channels] = {0};
 
     for (uint16_t i = 0; i < samples; i++) {
@@ -37,18 +39,25 @@ void joystick_calibrate(uint16_t samples)
         HAL_Delay(2);
     }
 
+    /* Publish all biases together: the ADC callback must not see a partial update. */
+    uint32_t primask = __get_PRIMASK();
+    __disable_irq();
     for (uint8_t ch = 0; ch < channels; ch++) {
         int32_t avg = sum[ch] / samples;
         joy_bias[ch] = avg - ADC_center;   // signed center error
     }
+    __set_PRIMASK(primask);
 }
 
 joystick_report get_report(void) {
+    uint32_t primask = __get_PRIMASK();
+    __disable_irq();
 	report.lx = lx;
 	report.ly = ly;
 
 	report.rx = rx;
 	report.ry = ry;
+    __set_PRIMASK(primask);
 
 	report.buttons = get_report_buttons();
 
@@ -73,8 +82,12 @@ int16_t deadzone_scale(int32_t x){
 
 void joystick_start_scan(void) {
 	//HAL_ADCEx_Calibration_Start(&hadc1, ADC_CALIB_OFFSET, ADC_SINGLE_ENDED);
-	HAL_ADC_Start_DMA(&hadc1, (uint32_t*)joystick_adc, channels);
-	HAL_TIM_Base_Start(&htim3);
+	if (HAL_ADC_Start_DMA(&hadc1, (uint32_t*)joystick_adc, channels) != HAL_OK) Error_Handler();
+	if (HAL_TIM_Base_Start(&htim3) != HAL_OK) Error_Handler();
+    uint32_t start = HAL_GetTick();
+    while (!scan_ready) {
+        if ((uint32_t)(HAL_GetTick() - start) >= 100U) Error_Handler();
+    }
 	joystick_calibrate(20);
 }
 
@@ -82,6 +95,7 @@ void joystick_start_scan(void) {
 void HAL_ADC_ConvCpltCallback(ADC_HandleTypeDef *hadc){
 	if (hadc->Instance == ADC1) {
 		joystick_update();
+        scan_ready = 1;
 	}
 }
 
@@ -101,7 +115,7 @@ int16_t joy_signed(uint8_t ch) {
 void joystick_print(void) {
 	char msg[64];
 	snprintf(msg, sizeof(msg), "lx: %d, ly: %d, rx: %d, ry: %d\n", lx, ly, rx, ry);
-	printf(msg);
+	printf("%s", msg);
 }
 
 void joystick_update(void) {
