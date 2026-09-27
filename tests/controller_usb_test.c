@@ -21,7 +21,8 @@ enum { CUSTOM_HID_IDLE, CUSTOM_HID_BUSY };
 #define CUSTOM_HID_EPOUT_SIZE 64
 #define CUSTOM_HID_EPIN_ADDR 0x81
 #define USBD_LPM_ENABLED 0
-#define USBD_SELF_POWERED 0
+#include "board_config.h"
+#define USBD_SELF_POWERED CONTROLLER_USB_SELF_POWERED
 #define USBD_MAX_STR_DESC_SIZ 512
 #define DEVICE_FS 0
 #define USB_REQ_TYPE_MASK 0x60
@@ -109,10 +110,26 @@ static void configure(void)
     hUsbDeviceFS.pClassDataCmsit[0] = &transport;
     controller_fops.Init();
 }
+static void test_power_configuration(void)
+{
+    uint16_t length;
+    const uint8_t *config = controller_usb_configuration(&length);
+    assert(length == 41);
+#if defined(HID_BUILD_PROTOTYPE)
+    assert(USBD_SELF_POWERED == 1);
+    assert(config[7] == 0xC0 && config[8] == 0);
+#else
+    assert(USBD_SELF_POWERED == 0);
+    assert(config[7] == 0x80);
+    assert(config[8] == (controller_usb_mode() == CONTROLLER_PC ? 50 : 250));
+#endif
+}
+
 int main(void)
 {
     joystick_report input = {1, 32767, -32767, 0, 0};
     controller_usb_init();
+    test_power_configuration();
     controller_usb_send(&input, 10); assert(sends == 0);
     configure(); controller_usb_send(&input, 10);
     assert(sends == 1 && in_flight_length == 10);
@@ -137,6 +154,7 @@ int main(void)
     controller_usb_send(&input, 349); assert(sends == 3);
     controller_usb_poll(350); assert(starts == 1);
     assert(controller_usb_report_descriptor_size() == 86);
+    test_power_configuration();
     configure(); controller_usb_send(&input, 351);
     assert(in_flight_length == 8 && in_flight[0] == 0 && in_flight[2] == 8 && in_flight[3] == 128);
     transport.state = CUSTOM_HID_IDLE;
@@ -148,6 +166,7 @@ int main(void)
     controller_usb_poll(149); assert(starts == 1);
     controller_usb_poll(150); assert(starts == 2);
     assert(controller_usb_mode() == CONTROLLER_PC && controller_usb_report_descriptor_size() == 56);
+    test_power_configuration();
     USBD_SetupReqTypedef request = {0x81, USB_REQ_GET_DESCRIPTOR, 0x2200, 0, 255};
     assert(registered_class->Setup(&hUsbDeviceFS, &request) == USBD_OK && control_length == 56);
     assert(control_data == mock_pc_descriptor);

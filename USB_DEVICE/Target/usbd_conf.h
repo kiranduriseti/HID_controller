@@ -35,6 +35,7 @@
 #include "stm32f4xx_hal.h"
 
 /* USER CODE BEGIN INCLUDE */
+#include "board_config.h"
 #define CUSTOM_HID_EPIN_SIZE 64U
 #define CUSTOM_HID_EPOUT_SIZE 64U
 #define CUSTOM_HID_EPOUT_ADDR 0x02U
@@ -76,7 +77,7 @@
 /*---------- -----------*/
 #define USBD_LPM_ENABLED     0U
 /*---------- -----------*/
-#define USBD_SELF_POWERED     0U
+#define USBD_SELF_POWERED     CONTROLLER_USB_SELF_POWERED
 /*---------- -----------*/
 #define USBD_CUSTOMHID_OUTREPORT_BUF_SIZE     64U
 /*---------- -----------*/

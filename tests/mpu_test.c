@@ -9,7 +9,7 @@
 typedef enum { HAL_OK, HAL_ERROR, HAL_BUSY, HAL_TIMEOUT } HAL_StatusTypeDef;
 typedef struct { int unused; } I2C_HandleTypeDef;
 I2C_HandleTypeDef hi2c2;
-static bool wrong_identity;
+static bool wrong_identity, fail_sleep;
 static unsigned reads, fail_at, power_value;
 static HAL_StatusTypeDef read_error = HAL_OK, write_error = HAL_OK;
 static const int16_t samples_x[] = {100, 200, -300};
@@ -27,6 +27,7 @@ static HAL_StatusTypeDef HAL_I2C_Mem_Read(I2C_HandleTypeDef *h, unsigned address
         return HAL_OK;
     }
     assert(reg == 0x43 && count == 4);
+    assert((power_value & 0x40U) == 0);
     unsigned index = reads++ % 3;
     if (read_error != HAL_OK && (fail_at == 0 || reads == fail_at)) return read_error;
     uint16_t x = (uint16_t)samples_x[index], y = (uint16_t)samples_y[index];
@@ -40,6 +41,7 @@ static HAL_StatusTypeDef HAL_I2C_Mem_Write(I2C_HandleTypeDef *h, unsigned addres
     (void)h;
     assert(address == 0xd0 && size == 1 && count == 1 && timeout > 0 && timeout <= 10);
     if (write_error != HAL_OK) return write_error;
+    if (fail_sleep && reg == 0x6b && (*data & 0x40U)) return HAL_ERROR;
     if (reg == 0x6b) power_value = *data;
     return HAL_OK;
 }
@@ -56,7 +58,12 @@ int main(void)
     read_error = HAL_OK; write_error = HAL_ERROR;
     mpu_init_gyro(); assert(!mpu_gyro_ready());
     write_error = HAL_OK;
+    fail_sleep = true;
+    mpu_init_gyro(); assert(!mpu_gyro_ready() && mpu_get_status() == HAL_ERROR);
+    fail_sleep = false;
     mpu_init_gyro(); assert(mpu_gyro_ready() && mpu_get_status() == HAL_OK);
+    assert((power_value & 0x40U) != 0);
+    mpu_wake();
 
     reads = 0;
     mpu_calibrate_gyro(3);
@@ -72,7 +79,14 @@ int main(void)
     assert(mpu_read_gyro(&x, &y) == HAL_TIMEOUT && x == 123 && y == -456);
     read_error = HAL_OK; reads = 2;
     assert(mpu_read_gyro(&x, &y) == HAL_OK && x == -300 && y == 600);
+    reads = 0; read_error = HAL_TIMEOUT; fail_at = 2;
+    mpu_init_gyro();
+    assert(!mpu_gyro_ready() && mpu_get_status() != HAL_OK);
+    assert((power_value & 0x40U) != 0);
+    read_error = HAL_OK; fail_at = 0;
     mpu_init_gyro(); assert(mpu_gyro_ready());
+    assert((power_value & 0x40U) != 0);
+    mpu_wake();
 
     unsigned awake = power_value;
     assert((awake & 0x40U) == 0);

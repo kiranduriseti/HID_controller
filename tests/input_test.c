@@ -118,7 +118,7 @@ static void test_buttons(void)
     set_pin(A_GPIO_Port, A_Pin, true); sample_for(10); assert(get_report_buttons() == 1);
     set_pin(A_GPIO_Port, A_Pin, false); sample_for(10); assert(get_report_buttons() == 0);
 
-    assert(get_acc_state() == 1 && wakes == 0);
+    assert(get_acc_state() == 1 && wakes == 0 && sleeps == 0);
     set_pin(ACC_control_GPIO_Port, ACC_control_Pin, true); sample_for(9);
     assert(get_acc_state() == 1);
     sample_for(1); assert(get_acc_state() == 0 && wakes == 1);
@@ -128,8 +128,11 @@ static void test_buttons(void)
     assert(get_acc_state() == 0 && wakes == 1);
     set_pin(ACC_control_GPIO_Port, ACC_control_Pin, false); sample_for(10);
     set_pin(ACC_control_GPIO_Port, ACC_control_Pin, true); sample_for(10);
-    assert(get_acc_state() == 1 && sleeps == 2);
+    assert(get_acc_state() == 1 && sleeps == 1 && wakes == 1);
+    sample_for(100);
+    assert(get_acc_state() == 1 && sleeps == 1 && wakes == 1);
     set_pin(ACC_control_GPIO_Port, ACC_control_Pin, false); sample_for(10);
+    assert(sleeps == 1 && wakes == 1);
     puts("PASS: all button mappings, short presses, press/release bounce, held/simultaneous buttons, tick wrap, gyro toggle rearm");
 }
 static void test_mode_gesture(void)

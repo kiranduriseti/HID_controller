@@ -34,6 +34,7 @@ uint8_t check; //check = 0x68
 static HAL_StatusTypeDef mpu_status = HAL_OK;
 static uint8_t gyro_ready = 0;
 static uint8_t awake_power = 0;
+
 HAL_StatusTypeDef mpu_get_status(void) { return mpu_status; }
 uint8_t mpu_gyro_ready(void) { return gyro_ready; }
 
@@ -119,24 +120,31 @@ void mpu_init_gyro(void){
     if (mpu_status != HAL_OK || check != 0x68) { mpu_status = HAL_ERROR; return; }
 	//mpu_wake();
 	mpu_write(power, 0x09); //disabled tempurature sensor
-    if (mpu_status != HAL_OK) return;
+    if (mpu_status != HAL_OK) goto finish;
 	HAL_Delay(50);
 
 	mpu_write(power_2, 0x38); //diable acc
-    if (mpu_status != HAL_OK) return;
+    if (mpu_status != HAL_OK) goto finish;
 
 	//mpu_write(config, 0);
 	mpu_write(config, 0x3);
-    if (mpu_status != HAL_OK) return;
+    if (mpu_status != HAL_OK) goto finish;
 	mpu_write(sample_rate, 0x0);
-    if (mpu_status != HAL_OK) return;
+    if (mpu_status != HAL_OK) goto finish;
 
 	//mpu_write(gyro_config, 0);
 	mpu_write(gyro_config, 0x18);
-    if (mpu_status != HAL_OK) return;
+    if (mpu_status != HAL_OK) goto finish;
 
 	mpu_calibrate_gyro(20);
     gyro_ready = (mpu_status == HAL_OK);
+finish:
+    {
+        HAL_StatusTypeDef initialization_status = mpu_status;
+        mpu_sleep();
+        if (initialization_status != HAL_OK) mpu_status = initialization_status;
+        if (mpu_status != HAL_OK) gyro_ready = 0;
+    }
 }
 
 void mpu_init(void){

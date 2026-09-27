@@ -20,6 +20,8 @@
 //rx : PA4
 //ry : PA5
 
+#define calibrate_samples 20U
+#define fault_ms 100U
 volatile uint16_t joystick_adc[channels] = {0};
 static volatile uint8_t scan_ready;
 static int32_t joy_bias[channels] = {0};
@@ -85,9 +87,9 @@ void joystick_start_scan(void) {
 	if (HAL_TIM_Base_Start(&htim3) != HAL_OK) Error_Handler();
     uint32_t start = HAL_GetTick();
     while (!scan_ready) {
-        if ((uint32_t)(HAL_GetTick() - start) >= 100U) Error_Handler();
+        if ((uint32_t)(HAL_GetTick() - start) >= fault_ms) Error_Handler();
     }
-	joystick_calibrate(20);
+	joystick_calibrate(calibrate_samples);
 }
 
 //whenever circular buffer completes cycle

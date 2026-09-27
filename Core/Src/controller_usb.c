@@ -4,6 +4,7 @@
 #include "usbd_core.h"
 #include "usbd_ctlreq.h"
 #include "controller_usb.h"
+#include "board_config.h"
 #include "usb_device.h"
 #include "usbd_custom_hid_if.h"
 #include "switch_report_descriptor.h"
@@ -23,14 +24,14 @@ static uint8_t switch_device[] = {
     18,1,0,2,0,0,0,64,0x0d,0x0f,0x92,0,0,1,1,2,0,1
 };
 static uint8_t switch_config[] = {
-    9,2,41,0,1,1,0,0x80,250,
+    9,2,41,0,1,1,0,CONTROLLER_USB_ATTRIBUTES,CONTROLLER_USB_SWITCH_MAX_POWER,
     9,4,0,0,2,3,0,0,0,
     9,0x21,0x11,1,0,1,0x22,sizeof(switch_report_descriptor),0,
     7,5,0x02,3,64,0,1,
     7,5,0x81,3,64,0,1
 };
 static uint8_t pc_config[] = {
-    9,2,41,0,1,1,0,0x80,50,
+    9,2,41,0,1,1,0,CONTROLLER_USB_ATTRIBUTES,CONTROLLER_USB_PC_MAX_POWER,
     9,4,0,0,2,3,0,0,0,
     9,0x21,0x11,1,0,1,0x22,USBD_CUSTOM_HID_REPORT_DESC_SIZE,0,
     7,5,0x81,3,64,0,5,
@@ -40,8 +41,8 @@ _Static_assert(sizeof(switch_report_descriptor) == 86, "Switch descriptor length
 _Static_assert(sizeof(joystick_report) == 10, "PC report layout");
 _Static_assert(USBD_CUSTOMHID_OUTREPORT_BUF_SIZE >= CUSTOM_HID_EPOUT_SIZE,
                "Set Custom HID OUT report buffer to 64 in CubeMX");
-_Static_assert(USBD_LPM_ENABLED == 0 && USBD_SELF_POWERED == 0,
-               "Keep USB LPM and self-powered disabled in CubeMX");
+_Static_assert(USBD_LPM_ENABLED == 0 && USBD_SELF_POWERED == CONTROLLER_USB_SELF_POWERED,
+               "Keep USB LPM disabled and USBD_SELF_POWERED tied to board_config.h");
 static uint16_t encode(uint8_t *out, const joystick_report *s)
 {
     return mode == CONTROLLER_SWITCH ? encode_switch_report(out, s) : encode_pc_report(out, s);

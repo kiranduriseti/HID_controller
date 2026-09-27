@@ -1,6 +1,8 @@
 # ===== Build output =====
 Debug/
 Release/
+Prototype/
+PCB/
 build/
 
 # ===== Binary outputs =====
@@ -35,3 +37,4 @@ Thumbs.db
 *~
 *.swp
 README.md
+USB_AND_TESTS_WALKTHROUGH.md
